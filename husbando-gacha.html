@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="FrctdDoll">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WolfPack // Gacha — Husbando</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#110118; --bg2:#200c32; --bg3:#1a1e28;
+  --border:#2a3045; --border2:#3a4560;
+  --accent:#fb00ff; --accent2:#7033ff; --accent3:#ff6b9d;
+  --text:#fb00ff; --text3:#7033ff;
+  --rare:#00d4ff; --epic:#b44fff; --legendary:#ff6b00;
+}
+body {
+  background:var(--bg); color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  overflow-x:hidden;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%,rgba(112,51,255,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(251,0,255,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 60% 80%,rgba(255,107,157,0.05) 0%,transparent 40%);
+  pointer-events:none; z-index:0;
+}
+
+/* HEADER */
+.page-header {
+  width:100%; display:flex; justify-content:space-between; align-items:center;
+  padding:12px 24px; background:var(--bg2); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:100;
+}
+.logo { cursor:pointer; position:relative; user-select:none; }
+.logo-text { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; letter-spacing:3px; color:var(--accent); }
+.logo-text span { color:var(--text3); }
+.logo-caret { font-size:10px; margin-left:6px; }
+.logo-dropdown { display:none; position:absolute; top:100%; left:0; background:var(--bg2); border:1px solid var(--border2); min-width:180px; z-index:200; margin-top:4px; }
+.logo.open .logo-dropdown { display:block; }
+.logo-nav-item { display:block; padding:8px 14px; color:var(--text3); text-decoration:none; font-size:11px; letter-spacing:1px; font-family:'Share Tech Mono',monospace; }
+.logo-nav-item:hover, .logo-nav-item.current { color:var(--accent); background:rgba(255,255,255,0.04); }
+.logo-nav-sep { border-top:1px solid var(--border); margin:4px 0; }
+
+/* INFO BUTTON */
+.btn-info {
+  background:transparent; border:1px solid var(--border2); color:var(--text3);
+  font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:2px;
+  padding:5px 12px; cursor:pointer; transition:all 0.15s;
+}
+.btn-info:hover { border-color:var(--accent); color:var(--accent); }
+
+/* SFW TOGGLE */
+.header-right { display:flex; align-items:center; gap:12px; }
+.sfw-wrap { display:flex; align-items:center; gap:8px; font-size:10px; letter-spacing:2px; }
+.sfw-label { color:var(--text3); }
+.sfw-label.active { color:var(--accent); }
+.toggle-switch {
+  width:44px; height:22px; background:var(--border2); border-radius:11px;
+  cursor:pointer; position:relative; transition:background 0.2s; border:1px solid var(--border2);
+}
+.toggle-switch.nsfw { background:rgba(251,0,255,0.3); border-color:var(--accent); }
+.toggle-switch::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:16px; height:16px; border-radius:50%; background:var(--text3); transition:all 0.2s;
+}
+.toggle-switch.nsfw::after { left:24px; background:var(--accent); }
+
+/* MODAL */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(17,1,24,0.92);
+  z-index:500; align-items:center; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--bg2); border:1px solid var(--border2); max-width:480px; width:90%;
+  padding:32px; position:relative;
+}
+.modal-title {
+  font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700;
+  letter-spacing:4px; color:var(--accent); margin-bottom:8px;
+}
+.modal-sub { font-size:10px; letter-spacing:2px; color:var(--text3); margin-bottom:24px; }
+.modal-body { font-size:12px; line-height:2; color:rgba(251,0,255,0.7); }
+.modal-body p { margin-bottom:14px; }
+.modal-body strong { color:var(--accent); }
+.modal-close {
+  margin-top:24px; background:transparent; border:1px solid var(--accent);
+  color:var(--accent); font-family:'Share Tech Mono',monospace; font-size:12px;
+  letter-spacing:3px; padding:10px 24px; cursor:pointer; width:100%;
+  transition:all 0.15s;
+}
+.modal-close:hover { background:var(--accent); color:var(--bg); }
+.modal-x {
+  position:absolute; top:12px; right:16px; background:none; border:none;
+  color:var(--text3); font-size:18px; cursor:pointer; font-family:'Share Tech Mono',monospace;
+}
+.modal-x:hover { color:var(--accent); }
+
+/* CONTAINER */
+.container { position:relative; z-index:1; width:100%; max-width:900px; padding:32px 24px; display:flex; flex-direction:column; align-items:center; gap:24px; }
+.page-title { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:4px; text-align:center; color:var(--text3); }
+.page-subtitle { font-family:'Rajdhani',sans-serif; font-size:34px; font-weight:700; letter-spacing:6px; text-align:center; color:var(--accent); text-shadow:0 0 30px rgba(251,0,255,0.4); margin-top:-4px; }
+.nsfw-indicator { font-size:9px; letter-spacing:2px; color:rgba(251,0,255,0.4); text-align:center; display:none; }
+.nsfw-indicator.visible { display:block; }
+
+/* CARD */
+.card-wrap { width:100%; max-width:440px; perspective:1000px; }
+.card {
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);
+  border:2px solid var(--border2); border-radius:8px;
+  padding:28px 28px 32px; position:relative; overflow:hidden;
+  transition:box-shadow 0.3s; transform-style:preserve-3d;
+}
+.holo-layer {
+  position:absolute; inset:0; border-radius:8px; pointer-events:none; z-index:2;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.015) 2px,rgba(255,255,255,0.015) 4px),
+    linear-gradient(125deg,rgba(255,0,128,0.15) 0%,rgba(255,200,0,0.15) 20%,rgba(0,255,128,0.15) 40%,rgba(0,128,255,0.15) 60%,rgba(128,0,255,0.15) 80%,rgba(255,0,128,0.15) 100%);
+  mix-blend-mode:screen; opacity:0; animation:holoShift 4s ease-in-out infinite;
+}
+@keyframes holoShift{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.card[data-rarity="Rare"] .holo-layer{opacity:0.4;}
+.card[data-rarity="Epic"] .holo-layer{opacity:0.55;}
+.card[data-rarity="Legendary"] .holo-layer{opacity:0.7;}
+.card:hover .holo-layer{opacity:0.85!important;}
+.shine-layer {
+  position:absolute; inset:0; border-radius:8px; pointer-events:none; z-index:3;
+  opacity:0; transition:opacity 0.2s;
+  background:radial-gradient(circle at var(--shine-x,50%) var(--shine-y,50%),rgba(255,255,255,0.18) 0%,transparent 55%);
+}
+.card:hover .shine-layer{opacity:1;}
+.passive-shimmer {
+  position:absolute; inset:0; border-radius:8px; pointer-events:none; z-index:2;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,0.025) 47%,rgba(255,255,255,0.06) 50%,rgba(255,255,255,0.025) 53%,transparent 65%);
+  animation:shimmerSweep 7s ease-in-out infinite;
+}
+@keyframes shimmerSweep{0%{transform:translateX(-120%) skewX(-15deg);opacity:0}8%{opacity:1}42%{transform:translateX(220%) skewX(-15deg);opacity:0}100%{transform:translateX(220%) skewX(-15deg);opacity:0}}
+.card-inset{position:absolute;inset:5px;border:1px solid rgba(255,255,255,0.05);border-radius:5px;pointer-events:none;z-index:1;}
+.card-corner{position:absolute;width:8px;height:8px;border-radius:50%;z-index:5;}
+.card-corner.tl{top:10px;left:10px}.card-corner.tr{top:10px;right:10px}
+.card-corner.bl{bottom:28px;left:10px}.card-corner.br{bottom:28px;right:10px}
+.card-stars{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:4px;z-index:5;transition:all 0.3s;}
+.char-name-bar,.stat-grid{position:relative;z-index:4;}
+.card[data-rarity="Common"]{border-color:rgba(112,51,255,0.4);box-shadow:0 0 20px rgba(251,0,255,0.08);}
+.card[data-rarity="Common"] .card-corner{background:rgba(112,51,255,0.5);}
+.card[data-rarity="Common"] .card-stars{color:rgba(112,51,255,0.5);}
+.card[data-rarity="Uncommon"]{border-color:rgba(0,212,255,0.5);box-shadow:0 0 25px rgba(0,212,255,0.2);}
+.card[data-rarity="Uncommon"] .card-corner{background:rgba(0,212,255,0.7);box-shadow:0 0 6px rgba(0,212,255,0.9);}
+.card[data-rarity="Uncommon"] .card-stars{color:rgba(0,212,255,0.7);}
+.card[data-rarity="Rare"]{border-color:var(--rare);box-shadow:0 0 30px rgba(0,212,255,0.4),0 0 80px rgba(0,212,255,0.1);background:linear-gradient(135deg,var(--bg2) 0%,rgba(0,30,50,0.95) 50%,var(--bg3) 100%);}
+.card[data-rarity="Rare"] .card-corner{background:var(--rare);box-shadow:0 0 8px var(--rare);}
+.card[data-rarity="Rare"] .card-stars{color:var(--rare);text-shadow:0 0 6px var(--rare);}
+.card[data-rarity="Epic"]{border-color:var(--epic);box-shadow:0 0 35px rgba(180,79,255,0.55),0 0 100px rgba(180,79,255,0.15);background:linear-gradient(135deg,var(--bg2) 0%,rgba(25,10,40,0.98) 50%,var(--bg3) 100%);}
+.card[data-rarity="Epic"] .card-corner{background:var(--epic);box-shadow:0 0 10px var(--epic);animation:gemPulse 1.5s ease-in-out infinite;}
+.card[data-rarity="Epic"] .card-stars{color:var(--epic);text-shadow:0 0 8px var(--epic);}
+.card[data-rarity="Legendary"]{border-color:var(--legendary);box-shadow:0 0 40px rgba(255,107,0,0.65),0 0 120px rgba(255,107,0,0.2);background:linear-gradient(135deg,rgba(20,8,0,0.98) 0%,var(--bg3) 50%,rgba(20,8,0,0.98) 100%);animation:legendaryPulse 2.5s ease-in-out infinite;}
+.card[data-rarity="Legendary"] .card-corner{background:var(--legendary);box-shadow:0 0 14px var(--legendary);animation:gemPulse 0.8s ease-in-out infinite;}
+.card[data-rarity="Legendary"] .card-stars{color:var(--legendary);text-shadow:0 0 12px var(--legendary);animation:starGlow 1s ease-in-out infinite;}
+@keyframes legendaryPulse{0%,100%{box-shadow:0 0 40px rgba(255,107,0,0.65),0 0 120px rgba(255,107,0,0.2)}50%{box-shadow:0 0 70px rgba(255,107,0,0.9),0 0 180px rgba(255,107,0,0.35)}}
+@keyframes gemPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:0.7}}
+@keyframes starGlow{0%,100%{text-shadow:0 0 12px var(--legendary)}50%{text-shadow:0 0 24px var(--legendary),0 0 40px rgba(255,107,0,0.5)}}
+.card.flashing{animation:cardFlash 0.5s ease;}
+@keyframes cardFlash{0%{opacity:1;transform:scale(1) rotateY(0deg)}25%{opacity:0.1;transform:scale(0.95) rotateY(-8deg)}60%{opacity:0.9;transform:scale(1.03) rotateY(4deg)}100%{opacity:1;transform:scale(1) rotateY(0deg)}}
+.card[data-futa="true"]{border-style:double;}
+.char-name-bar{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.char-name{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;letter-spacing:2px;color:var(--accent);}
+.rarity-badge{font-size:10px;letter-spacing:2px;padding:3px 8px;border:1px solid;text-transform:uppercase;}
+.rarity-badge.Common{color:var(--text3);border-color:var(--border2);}
+.rarity-badge.Uncommon{color:var(--rare);border-color:var(--rare);}
+.rarity-badge.Rare{color:var(--rare);border-color:var(--rare);background:rgba(0,212,255,0.06);}
+.rarity-badge.Epic{color:var(--epic);border-color:var(--epic);background:rgba(180,79,255,0.08);}
+.rarity-badge.Legendary{color:var(--legendary);border-color:var(--legendary);background:rgba(255,107,0,0.08);}
+.futa-badge{font-size:9px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--accent3);color:var(--accent3);margin-left:6px;display:none;}
+.futa-badge.visible{display:inline;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 20px;}
+.stat-row{display:flex;align-items:baseline;gap:8px;font-size:12px;opacity:0;transform:translateX(-8px);transition:opacity 0.25s ease,transform 0.25s ease;}
+.stat-row.visible{opacity:1;transform:translateX(0);}
+.stat-icon{color:var(--accent2);font-size:13px;min-width:16px;}
+.stat-label{color:var(--text3);font-size:10px;letter-spacing:1px;}
+.stat-value{color:var(--text);margin-left:auto;text-align:right;font-size:11px;}
+.stat-row.futa-row .stat-icon{color:var(--accent3);}
+.stat-row.futa-row .stat-value{color:var(--accent3);}
+.prompt-section,.neg-section{width:100%;max-width:440px;}
+.prompt-label{font-size:10px;letter-spacing:2px;color:var(--text3);margin-bottom:5px;}
+.prompt-box{background:var(--bg3);border:1px solid var(--border);padding:12px 14px;font-size:11px;line-height:1.7;color:var(--accent3);min-height:70px;cursor:pointer;transition:border-color 0.15s;position:relative;word-break:break-word;}
+.prompt-box:hover{border-color:var(--border2);}
+.prompt-box::after{content:'CLICK TO COPY';position:absolute;bottom:6px;right:8px;font-size:9px;letter-spacing:1px;color:var(--text3);opacity:0;transition:opacity 0.15s;}
+.prompt-box:hover::after{opacity:1;}
+.neg-box{background:var(--bg3);border:1px solid var(--border);padding:10px 14px;font-size:10px;line-height:1.6;color:rgba(251,0,255,0.4);cursor:pointer;transition:border-color 0.15s;}
+.neg-box:hover{border-color:var(--border2);}
+.copy-flash{border-color:var(--accent)!important;}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.btn-gacha{background:transparent;border:2px solid var(--accent);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:4px;padding:14px 44px;cursor:pointer;text-transform:uppercase;position:relative;overflow:hidden;transition:all 0.2s;}
+.btn-gacha::before{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.2s;z-index:-1;}
+.btn-gacha:hover{color:var(--bg);}
+.btn-gacha:hover::before{transform:scaleX(1);}
+.btn-gacha:active{transform:scale(0.97);}
+.btn-copy{background:transparent;border:1px solid var(--border2);color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;cursor:pointer;transition:all 0.15s;}
+.btn-copy:hover{border-color:var(--accent2);color:var(--accent2);}
+.roll-counter{font-size:10px;letter-spacing:2px;color:var(--text3);text-align:center;}
+.roll-counter span{color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-title">WOLFPACK // GACHA</div>
+    <div class="modal-sub">// COLLECTOR CARD GENERATOR</div>
+    <div class="modal-body">
+      <p>This tool generates a <strong>randomised character</strong> as a collector card -- complete with rarity, holographic effects, and an assembled prompt ready to use in Stable Diffusion.</p>
+      <p>Each <strong>PULL</strong> rolls a new character with randomised race, appearance, outfit, and scene. The assembled positive and negative prompts are displayed below the card and can be copied with a single click.</p>
+      <p>The <strong>rarity system</strong> affects card visuals and prompt quality. Common cards get a clean result. Legendary cards get cinematic lighting, atmospheric depth, and an ornate collector frame -- all baked into the prompt.</p>
+      <p>Toggle <strong>SFW / NSFW</strong> in the header to unlock a wider outfit pool and more explicit prompt tags. The negative prompt updates automatically to match.</p>
+      <p>The <strong>background scene</strong> is weighted by race and refined by outfit -- an Elf in Fantasy Robes gets a moonlit elven grove with floating scrolls. A Vampire in a Gothic outfit gets a candlelit dungeon or baroque ballroom.</p>
+      <p>This is a <strong>v3 prototype</strong> -- the full version will be integrated into the WolfPack OC Builder as a modal pull system with character saving.</p>
+    </div>
+    <button class="modal-close" onclick="closeModal()">[ GOT IT ]</button>
+  </div>
+</div>
+
+<div class="page-header">
+  <div class="logo" id="logoMenu">
+    <span class="logo-text">WolfPack <span>//</span> Gacha<span class="logo-caret">▼</span></span>
+    <div class="logo-dropdown">
+      <a class="logo-nav-item " href="waifu-gacha.html">Waifu</a>
+      <a class="logo-nav-item current" href="#">Husbando</a>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn-info" onclick="openModal()">[ ? ]</button>
+    <div class="sfw-wrap">
+      <span class="sfw-label active" id="sfwLbl">SFW</span>
+      <div class="toggle-switch" id="sfwToggle"></div>
+      <span class="sfw-label" id="nsfwLbl">NSFW</span>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div>
+    <div class="page-title">// WOLFPACK // GACHA //</div>
+    <div class="page-subtitle">HUSBANDO</div>
+  </div>
+  <div class="nsfw-indicator" id="nsfwInd">⚠ NSFW MODE ACTIVE</div>
+  <div class="card-wrap">
+    <div class="card" id="card" data-rarity="Common">
+      <div class="holo-layer"></div>
+      <div class="shine-layer" id="shineLyr"></div>
+      <div class="passive-shimmer"></div>
+      <div class="card-inset"></div>
+      <div class="card-corner tl"></div><div class="card-corner tr"></div>
+      <div class="card-corner bl"></div><div class="card-corner br"></div>
+      <div class="card-stars" id="cardStars">★☆☆☆☆</div>
+      <div class="char-name-bar">
+        <div class="char-name" id="charName">???</div>
+        <div>
+          <span class="rarity-badge Common" id="rarityBadge">Common</span>
+          
+        </div>
+      </div>
+      <div class="stat-grid" id="statGrid"></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-gacha" onclick="roll()">✦ PULL ✦</button>
+    <button class="btn-copy" onclick="copyPrompt()">[ COPY PROMPT ]</button>
+    <button class="btn-copy" onclick="copyNeg()">[ COPY NEG ]</button>
+  </div>
+  <div class="roll-counter">TOTAL PULLS: <span id="rollCount">0</span></div>
+  <div class="prompt-section">
+    <div class="prompt-label">// POSITIVE PROMPT</div>
+    <div class="prompt-box" id="promptBox" onclick="copyPrompt()">Roll to generate...</div>
+  </div>
+  <div class="neg-section">
+    <div class="prompt-label">// NEGATIVE PROMPT</div>
+    <div class="neg-box" id="negBox" onclick="copyNeg()">Roll to generate...</div>
+  </div>
+</div>
+<script>
+
+const RARITIES=[{label:'Common',weight:50,stars:'★☆☆☆☆'},{label:'Uncommon',weight:25,stars:'★★☆☆☆'},{label:'Rare',weight:15,stars:'★★★☆☆'},{label:'Epic',weight:7,stars:'★★★★☆'},{label:'Legendary',weight:3,stars:'★★★★★'}];
+const RARITY_BOOST={Common:'Uncommon',Uncommon:'Rare',Rare:'Epic',Epic:'Legendary',Legendary:'Legendary'};
+const RACE_BG={Human:['stone hall interior,','cobblestone city street,','grand library interior,','medieval marketplace,','castle courtyard,'],Elf:['ancient forest, towering trees,','moonlit elven grove,','overgrown ruins, ivy-covered stone,','crystalline waterfall, forest,','floating elven city in the clouds,'],'Dark Elf':['underground obsidian cavern, glowing crystals,','dark forest, twisted trees, purple mist,','underground throne room, black stone,','shadowy dungeon, torchlight,','volcanic underground palace,'],Neko:['japanese shrine steps, cherry blossoms,','bamboo forest, golden light,','rooftop at sunset, city below,','cozy cafe interior,','japanese festival, lanterns,'],Kitsune:['ancient shinto shrine, torii gate, mist,','moonlit bamboo forest,','spirit realm, floating lights,','autumn maple forest,','sakura garden at dusk,'],Oni:['volcanic forge interior, molten rock,','stormy mountain peak, lightning,','red torii gate in storm,','feudal japanese battlefield,','demonic palace interior,'],Vampire:['gothic castle interior, moonlight,','fog-lit graveyard, iron gate,','candlelit dungeon, stone walls,','baroque ballroom, chandeliers,','dark forest, full moon,'],'Demi-Human':['ancient ruins, overgrown,','tribal village at dusk,','mountain cliffside, wide sky,','old stone temple interior,','wild grasslands, sunset,'],Android:['neon-lit cyberpunk cityscape, rain,','server room, blue lights,','futuristic corridor, holographic displays,','rooftop, city lights below, night,','abandoned factory, industrial,'],'Dragon Girl':['mountain peak above clouds,','lava cave, glowing magma,','ancient dragon temple, treasure,','cliffside overlooking ocean, storm,','volcanic crater, ember sky,'],'Dragon Boy':['mountain peak above clouds,','lava cave, glowing magma,','ancient dragon temple, treasure,','cliffside overlooking ocean, storm,','volcanic crater, ember sky,'],Witch:['magical study, floating books,','dark witch cottage, cauldron,','mystic forest, glowing runes,','ancient tower library,','moonlit ritual circle, forest,'],Goblin:['underground market, lanterns,','cave dwelling, flickering torches,','cluttered junk workshop,','underground treasure vault,','dimly lit cave tavern,'],Demon:['hellscape, fire and brimstone,','corrupted throne room, dark void,','shadowed dimensional rift,','dark palace, crimson sky,','ruined cathedral, demonic,'],Beastman:['dense primal forest, moonlight,','moonlit forest clearing,','ancient tribal ruins,','misty mountain forest,','wild savanna at dusk,']};
+const OUTFIT_BG_MOD={Armour:'fortress gate, epic battlefield,','Battle Outfit':'battle arena, dramatic sky,','Military Uniform':'military command room,','School Uniform':'school rooftop, clear sky,','Maid Outfit':'elegant manor interior, ornate decor,','Idol Costume':'concert stage, spotlight, crowd,',Kimono:'japanese garden, stone lanterns,',Yukata:'summer festival, lanterns and fireworks,','Fantasy Robes':'ancient magical study, floating scrolls,',Bodysuit:'sleek facility rooftop, night city,','Suit & Tie':'penthouse balcony, city skyline, night,','Lab Coat':'modern laboratory, blue lighting,',Gothic:'gothic cathedral interior, stained glass,','Gothic Lolita':'overgrown victorian garden,',Streetwear:'urban street art alley, golden hour,',Casual:'warm cafe window seat, afternoon light,','Trench Coat':'rain-slicked city street, night,',Sundress:'sunny meadow, wildflowers,',Qipao:'ornate chinese palace hall,','Priest/Clergy':'cathedral interior, light through windows,',Bikini:'tropical beach, clear water,',Shirtless:'mountain stream, golden light,'};
+const RARITY_BG_QUALITY={Common:'detailed background,',Uncommon:'detailed background, scenic,',Rare:'highly detailed background, cinematic lighting, atmospheric,',Epic:'highly detailed background, dramatic cinematic lighting, volumetric fog,',Legendary:'masterpiece background, epic cinematic lighting, god rays, atmospheric depth, breathtaking scenery,'};
+const RARITY_QUALITY={Common:'masterpiece, best quality, highres,',Uncommon:'masterpiece, best quality, highres,',Rare:'(masterpiece:1.1), best quality, highres, detailed,',Epic:'(masterpiece:1.2), best quality, highres, highly detailed, cinematic,',Legendary:'(masterpiece:1.4), (best quality:1.3), highres, ultra-detailed, cinematic composition, stunning,'};
+const RARITY_BORDER={Common:'simple border, clean frame,',Uncommon:'decorative border,',Rare:'ornate border, elegant frame,',Epic:'elaborate gilded border, intricate frame,',Legendary:'legendary collector card frame, ornate gilded border, masterwork,'};
+const STAT_ICONS={Race:'🜁',HairColor:'◎',HairStyle:'〜',Eyes:'◉',Physique:'△',Bust:'✦',Legs:'◐',Build:'◇',Skin:'◑',Expression:'〽',Outfit:'◈',Accessory:'✧',Scene:'◫',Type:'♦'};
+function weightedRandom(arr){var t=arr.reduce(function(s,i){return s+(i.weight||1);},0),r=Math.random()*t;for(var i=0;i<arr.length;i++){r-=(arr[i].weight||1);if(r<=0)return arr[i];}return arr[arr.length-1];}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function pickBg(race,outfit,rarity){var bgs=RACE_BG[race]||RACE_BG['Human'],bg=bgs[Math.floor(Math.random()*bgs.length)],mod=OUTFIT_BG_MOD[outfit]||'';if(mod)bg=mod+' '+bg;return(bg+' '+(RARITY_BG_QUALITY[rarity]||'')).trim();}
+function boostRarity(r){var nl=RARITY_BOOST[r.label];return nl?RARITIES.find(function(x){return x.label===nl;})||r:r;}
+var rollCount=0,currentPrompt='',currentNeg='',isNSFW=false;
+function setNSFW(v){isNSFW=v;var sw=document.getElementById('sfwToggle'),sl=document.getElementById('sfwLbl'),nl=document.getElementById('nsfwLbl'),ind=document.getElementById('nsfwInd');if(sw)sw.classList.toggle('nsfw',v);if(sl)sl.classList.toggle('active',!v);if(nl)nl.classList.toggle('active',v);if(ind)ind.classList.toggle('visible',v);}
+function copyPrompt(){if(!currentPrompt)return;var box=document.getElementById('promptBox');try{navigator.clipboard.writeText(currentPrompt);}catch(e){var ta=document.createElement('textarea');ta.value=currentPrompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}box.classList.add('copy-flash');setTimeout(function(){box.classList.remove('copy-flash');},600);}
+function copyNeg(){if(!currentNeg)return;var box=document.getElementById('negBox');try{navigator.clipboard.writeText(currentNeg);}catch(e){var ta=document.createElement('textarea');ta.value=currentNeg;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}box.classList.add('copy-flash');setTimeout(function(){box.classList.remove('copy-flash');},600);}
+function openModal(){document.getElementById('modalOverlay').classList.add('open');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function animateCard(rarity,isFuta){var card=document.getElementById('card');card.classList.remove('flashing');void card.offsetWidth;card.classList.add('flashing');card.setAttribute('data-rarity',rarity);card.setAttribute('data-futa',isFuta?'true':'false');}
+function updateCardMeta(name,rarity,stars,isFuta){document.getElementById('charName').textContent=name;var badge=document.getElementById('rarityBadge');badge.textContent=rarity;badge.className='rarity-badge '+rarity;document.getElementById('cardStars').textContent=stars;var fb=document.getElementById('futaBadge');if(fb)fb.className='futa-badge'+(isFuta?' visible':'');}
+function renderStats(stats){var grid=document.getElementById('statGrid');grid.innerHTML=stats.map(function(s){return'<div class="stat-row'+(s.futa?' futa-row':'')+'" data-key="'+s.key+'"><span class="stat-icon">'+s.icon+'</span><span class="stat-label">'+s.label+'</span><span class="stat-value">'+s.value+'</span></div>';}).join('');var rows=grid.querySelectorAll('.stat-row');rows.forEach(function(row,i){setTimeout(function(){row.classList.add('visible');},i*40+80);});}
+document.addEventListener('DOMContentLoaded',function(){
+  var logo=document.getElementById('logoMenu');
+  if(logo){logo.addEventListener('click',function(e){if(e.target.closest('.logo-nav-item'))return;logo.classList.toggle('open');});document.addEventListener('click',function(e){if(!logo.contains(e.target))logo.classList.remove('open');});}
+  var sw=document.getElementById('sfwToggle');if(sw)sw.addEventListener('click',function(){setNSFW(!isNSFW);});
+  var card=document.getElementById('card');
+  if(card){card.addEventListener('mousemove',function(e){var rect=card.getBoundingClientRect(),x=((e.clientX-rect.left)/rect.width)*100,y=((e.clientY-rect.top)/rect.height)*100,sl=document.getElementById('shineLyr');if(sl){sl.style.setProperty('--shine-x',x+'%');sl.style.setProperty('--shine-y',y+'%');}card.style.transform='perspective(900px) rotateX('+((y-50)*0.07)+'deg) rotateY('+((x-50)*-0.07)+'deg)';});card.addEventListener('mouseleave',function(){card.style.transform='';});}
+  document.documentElement.setAttribute('data-theme','FrctdDoll');
+  roll();
+});
+
+
+const NAMES=['Aeden','Alaric','Aldric','Alec','Aleksei','Alistair','Anders','Andor','Ansel','Archer','Arden','Ares','Arion','Arlen','Arno','Aron','Asher','Ashton','Aslan','Axel','Azar','Azrael','Bastian','Beau','Beck','Beckett','Bjorn','Blade','Blaine','Blake','Blaze','Bowen','Bram','Brand','Brent','Brice','Brion','Brock','Brom','Bryn','Cade','Cael','Caiden','Cain','Caius','Cale','Calen','Callan','Calum','Calvin','Caspar','Cassian','Cassius','Cato','Cayden','Cedric','Cian','Clark','Clovis','Conan','Connor','Conrad','Corin','Corvus','Cullen','Dalan','Dale','Dalton','Damian','Damon','Dane','Darian','Darius','Darren','Davin','Davis','Declan','Derek','Dev','Devlin','Devon','Dorian','Drake','Draven','Drew','Dune','Duran','Dylan','Eamon','Egan','Elias','Emeric','Emil','Emrys','Enric','Erasmus','Eric','Evan','Everett','Fabian','Felix','Fenix','Fenric','Finlay','Finn','Fionn','Flint','Flynn','Gareth','Garen','Garth','Gavin','Gawain','Gideon','Glen','Godric','Goran','Grant','Graven','Graydon','Griffin','Gunnar','Gustav','Hadric','Harald','Harlan','Hawk','Hayden','Helric','Henrik','Hudson','Hugo','Iain','Ian','Isaac','Ivan','Jace','Jaden','Jagger','Jasper','Jett','Jonas','Jordan','Julian','Julius','Kael','Kaiden','Kale','Kane','Kaspar','Kato','Kayden','Kazimir','Keane','Kieran','Killian','Knox','Koen','Kylan','Landen','Landon','Laszlo','Leo','Leon','Lewis','Liam','Logan','Luca','Lucian','Lukas','Magnus','Malik','Marek','Marius','Matthias','Maxim','Maxon','Maxwell','Mikael','Milan','Nash','Nial','Niall','Odin','Orion','Owen','Pascal','Pierce','Quinn','Rafe','Raiden','Reed','Reeve','Rex','Rhett','Rhys','Roland','Ronan','Rowan','Rune','Ryker','Rylan','Saxon','Seamus','Seth','Silas','Soren','Stellan','Sterling','Sven','Thane','Theron','Thorin','Tobin','Tristan','Tylan','Ulric','Uther','Valen','Vesper','Victor','Wilder','Wulf','Wylan','Xander','Xavier','Zander','Zevic','Zidan'];
+const RACES=[{label:'Human',icon:'\u25ce',tags:'1boy, human,',weight:30},{label:'Elf',icon:'\u2701',tags:'1boy, elf, pointed ears,',weight:15},{label:'Dark Elf',icon:'\u2703',tags:'1boy, dark elf, pointed ears, dark skin,',weight:10},{label:'Neko',icon:'\U0001F43E',tags:'1boy, cat boy, neko, cat ears, cat tail,',weight:10},{label:'Kitsune',icon:'\U0001F98A',tags:'1boy, fox boy, kitsune, fox ears, fox tail,',weight:7},{label:'Oni',icon:'\u26a1',tags:'1boy, oni, oni horns,',weight:7},{label:'Vampire',icon:'\U0001FA78',tags:'1boy, vampire, pale skin, fangs,',weight:6},{label:'Demi-Human',icon:'\u25d1',tags:'1boy, demi-human,',weight:8},{label:'Android',icon:'\u25c8',tags:'1boy, android, mechanical joints,',weight:4},{label:'Dragon Boy',icon:'\U0001F409',tags:'1boy, dragon boy, dragon horns, dragon tail, scales,',weight:3},{label:'Demon',icon:'\U0001F608',tags:'1boy, demon, demon horns, demon tail,',weight:4},{label:'Beastman',icon:'\U0001F43A',tags:'1boy, beastman, wolf ears, wolf tail,',weight:4}];
+const HAIR_COLORS=[{label:'Black',tags:'black hair,',weight:14},{label:'Brown',tags:'brown hair,',weight:12},{label:'Blonde',tags:'blonde hair,',weight:12},{label:'Red',tags:'red hair,',weight:10},{label:'Auburn',tags:'auburn hair,',weight:6},{label:'Silver',tags:'silver hair, white hair,',weight:8},{label:'Purple',tags:'purple hair,',weight:7},{label:'Blue',tags:'blue hair,',weight:6},{label:'Pink',tags:'pink hair,',weight:4},{label:'Green',tags:'green hair,',weight:4},{label:'White',tags:'white hair,',weight:5},{label:'Dark Blue',tags:'dark blue hair,',weight:5},{label:'Gradient',tags:'gradient hair, multicolored hair,',weight:4},{label:'Ash',tags:'ash hair, grey hair,',weight:5}];
+const HAIR_STYLES=[{label:'Short Neat',tags:'short hair, neat cut,',weight:14},{label:'Medium Swept',tags:'medium hair, swept back,',weight:12},{label:'Long Straight',tags:'long hair, straight hair,',weight:10},{label:'Undercut',tags:'undercut, shaved sides,',weight:8},{label:'Ponytail',tags:'long hair, ponytail,',weight:8},{label:'Messy',tags:'messy hair, disheveled hair,',weight:8},{label:'Slicked Back',tags:'slicked back hair,',weight:7},{label:'Braided',tags:'braided hair,',weight:5},{label:'Spiky',tags:'spiky hair,',weight:8},{label:'Half-Up',tags:'half-up hair,',weight:5},{label:'Wild',tags:'long hair, wild hair,',weight:6},{label:'Bun',tags:'hair bun, man bun,',weight:5},{label:'Curtains',tags:'curtains haircut, center part,',weight:4}];
+const EYE_COLORS=[{label:'Brown',tags:'brown eyes,',weight:14},{label:'Blue',tags:'blue eyes,',weight:12},{label:'Green',tags:'green eyes,',weight:10},{label:'Grey',tags:'grey eyes,',weight:9},{label:'Violet',tags:'violet eyes, purple eyes,',weight:7},{label:'Red',tags:'red eyes,',weight:7},{label:'Gold',tags:'gold eyes, amber eyes,',weight:7},{label:'Teal',tags:'teal eyes,',weight:5},{label:'Silver',tags:'silver eyes,',weight:5},{label:'Black',tags:'black eyes,',weight:6},{label:'Heterochromia',tags:'heterochromia, odd-colored eyes,',weight:3},{label:'Crimson',tags:'crimson eyes,',weight:3}];
+const PHYSIQUES=[{label:'Slender',tags:'slender build, slim,',weight:18},{label:'Athletic',tags:'athletic build, toned,',weight:22},{label:'Muscular',tags:'muscular build, strong, broad shoulders,',weight:18},{label:'Lean',tags:'lean build, wiry,',weight:12},{label:'Tall',tags:'tall, long legs,',weight:10},{label:'Short',tags:'short stature, petite height,',weight:6},{label:'Heavyset',tags:'heavyset, broad frame, stocky,',weight:5},{label:'Imposing',tags:'imposing figure, large frame, massive build,',weight:5},{label:'Willowy',tags:'willowy, long limbs, graceful,',weight:4}];
+const BUST_SFW=[{label:'Lean',tags:'lean chest, flat chest,',weight:20},{label:'Toned',tags:'toned chest, defined pecs,',weight:30},{label:'Broad',tags:'broad chest,',weight:25},{label:'Muscular',tags:'muscular chest, large pecs,',weight:15},{label:'Slender',tags:'slim chest,',weight:10}];
+const BUST_NSFW=[{label:'Lean',tags:'lean chest, visible abs,',weight:18},{label:'Toned',tags:'toned chest, defined pecs, abs,',weight:28},{label:'Broad',tags:'broad chest, bare torso,',weight:22},{label:'Muscular',tags:'muscular chest, large pecs, shirtless,',weight:18},{label:'Slender',tags:'slim chest, shirtless,',weight:14}];
+const THIGHS=[{label:'Slim',tags:'slim legs,',weight:20},{label:'Average',tags:'',weight:30},{label:'Muscular',tags:'muscular legs, powerful legs,',weight:25},{label:'Athletic',tags:'toned legs,',weight:15},{label:'Long',tags:'long legs,',weight:10}];
+const HIPS=[{label:'Lean',tags:'lean waist,',weight:20},{label:'Average',tags:'',weight:35},{label:'Broad',tags:'broad frame,',weight:20},{label:'V-Taper',tags:'v-taper physique, wide shoulders narrow waist,',weight:15},{label:'Stocky',tags:'stocky lower body,',weight:10}];
+const SKIN=[{label:'Fair',tags:'fair skin,',weight:18},{label:'Pale',tags:'pale skin,',weight:10},{label:'Light',tags:'light skin,',weight:15},{label:'Tan',tags:'tan skin,',weight:14},{label:'Brown',tags:'brown skin,',weight:10},{label:'Dark',tags:'dark skin,',weight:10},{label:'Olive',tags:'olive skin,',weight:10},{label:'Warm',tags:'warm skin tone,',weight:7},{label:'Tanned',tags:'tanned skin,',weight:4},{label:'Scarred',tags:'scarred skin, battle scars,',weight:2}];
+const EXPRESSIONS=[{label:'Confident',tags:'confident expression, smirk,',weight:20},{label:'Serious',tags:'serious expression, stoic,',weight:18},{label:'Smiling',tags:'smile, warm expression,',weight:15},{label:'Determined',tags:'determined expression,',weight:12},{label:'Brooding',tags:'brooding expression, pensive,',weight:10},{label:'Playful',tags:'playful expression, grin,',weight:8},{label:'Aloof',tags:'aloof expression, neutral,',weight:7},{label:'Fierce',tags:'fierce expression, intense gaze,',weight:6},{label:'Gentle',tags:'gentle expression, soft smile,',weight:4}];
+const OUTFITS_SFW=[{label:'Fantasy Robes',tags:'fantasy robes, mage outfit,',weight:10},{label:'School Uniform',tags:'school uniform, blazer, dress pants,',weight:10},{label:'Armour',tags:'armour, pauldrons, fantasy armour,',weight:10},{label:'Suit & Tie',tags:'suit, dress shirt, tie, formal attire,',weight:8},{label:'Casual',tags:'t-shirt, jeans, casual outfit,',weight:9},{label:'Yukata',tags:'yukata, traditional japanese,',weight:6},{label:'Military Uniform',tags:'military uniform, officer uniform,',weight:7},{label:'Streetwear',tags:'hoodie, joggers, casual streetwear,',weight:8},{label:'Battle Outfit',tags:'battle outfit, tactical attire,',weight:8},{label:'Trench Coat',tags:'long trench coat, dark coat,',weight:6},{label:'Idol Costume',tags:'idol costume, stage outfit,',weight:4},{label:'Open Shirt',tags:'open shirt, unbuttoned shirt, casual,',weight:5},{label:'Kimono',tags:'kimono, traditional japanese, hakama,',weight:5},{label:'Lab Coat',tags:'lab coat, scientist, white coat,',weight:4},{label:'Gothic',tags:'gothic outfit, dark clothing, black attire,',weight:4},{label:'Shirtless',tags:'shirtless, bare torso, bare chest,',weight:4},{label:'Priest/Clergy',tags:'priest robes, clergy outfit,',weight:3}];
+const OUTFITS_NSFW=[{label:'Fantasy Robes',tags:'fantasy robes, open robes,',weight:8},{label:'Armour',tags:'armour, battle damaged armour,',weight:8},{label:'Suit & Tie',tags:'suit, partially undone, open collar,',weight:7},{label:'Casual',tags:'casual outfit, low waistband,',weight:8},{label:'Military Uniform',tags:'military uniform, partially undressed,',weight:6},{label:'Streetwear',tags:'hoodie, shirtless underneath,',weight:7},{label:'Battle Outfit',tags:'battle outfit, torn clothing,',weight:7},{label:'Shirtless',tags:'shirtless, bare torso, abs,',weight:10},{label:'Underwear Only',tags:'underwear, briefs, bare torso,',weight:6},{label:'Nude',tags:'nude, naked, bare body,',weight:4},{label:'Open Shirt',tags:'open shirt, bare chest visible,',weight:8},{label:'Trench Coat',tags:'trench coat, nothing underneath,',weight:4},{label:'Gothic',tags:'gothic outfit, revealing dark attire,',weight:4}];
+const ACCESSORIES=[{label:'None',tags:'',weight:15},{label:'Glasses',tags:'glasses,',weight:10},{label:'Sword',tags:'sword, katana,',weight:8},{label:'Earring',tags:'earring, single earring,',weight:6},{label:'Scarf',tags:'scarf,',weight:7},{label:'Hat',tags:'hat,',weight:6},{label:'Staff',tags:'staff, magic staff,',weight:6},{label:'Magic Orb',tags:'magic orb, glowing orb,',weight:5},{label:'Bow & Arrow',tags:'bow, quiver, archer,',weight:5},{label:'Necklace',tags:'necklace, pendant,',weight:5},{label:'Cape/Cloak',tags:'cape, flowing cape,',weight:5},{label:'Wings',tags:'wings,',weight:4},{label:'Tail',tags:'tail,',weight:4},{label:'Book/Tome',tags:'book, tome,',weight:4},{label:'Gloves',tags:'gloves,',weight:4},{label:'Gun',tags:'gun, pistol,',weight:4},{label:'Mask',tags:'mask, half mask,',weight:3},{label:'Bandages',tags:'bandaged arm, bandages,',weight:4}];
+const NEG_SFW='lowres, bad anatomy, bad hands, missing fingers, extra fingers, fused fingers, bad face, ugly, deformed, mutated, poorly drawn face, poorly drawn hands, blurry, watermark, signature, text, logo, cropped, worst quality, low quality, normal quality, jpeg artifacts, extra limbs, missing limbs, floating limbs, disconnected limbs, malformed hands, long neck, bad proportions, gross proportions, (female:1.3), feminine features, breasts, nude, naked, nsfw, explicit content';
+const NEG_NSFW='lowres, bad anatomy, bad hands, missing fingers, extra fingers, fused fingers, bad face, ugly, deformed, mutated, poorly drawn face, poorly drawn hands, blurry, watermark, signature, text, logo, cropped, worst quality, low quality, normal quality, jpeg artifacts, extra limbs, missing limbs, floating limbs, disconnected limbs, malformed hands, long neck, bad proportions, gross proportions, (female:1.3), breasts';
+function roll(){
+  rollCount++;document.getElementById('rollCount').textContent=rollCount;
+  var name=pick(NAMES),race=weightedRandom(RACES),hairCol=weightedRandom(HAIR_COLORS),hairSty=weightedRandom(HAIR_STYLES),eyes=weightedRandom(EYE_COLORS),physique=weightedRandom(PHYSIQUES),bust=weightedRandom(isNSFW?BUST_NSFW:BUST_SFW),thighs=weightedRandom(THIGHS),hips=weightedRandom(HIPS),skin=weightedRandom(SKIN),expression=weightedRandom(EXPRESSIONS),outfit=weightedRandom(isNSFW?OUTFITS_NSFW:OUTFITS_SFW),acc=weightedRandom(ACCESSORIES),rarity=weightedRandom(RARITIES);
+  var bg=pickBg(race.label,outfit.label,rarity.label),rQ=RARITY_QUALITY[rarity.label],rB=RARITY_BORDER[rarity.label];
+  var tags=['1boy, '+name.toLowerCase()+',',race.tags,skin.tags,hairCol.tags,hairSty.tags,eyes.tags,physique.tags,bust.tags,thighs.tags||null,hips.tags||null,expression.tags,outfit.tags,acc.tags||null,'solo,',bg,rB,rQ].filter(function(t){return t&&t.trim();}).join('\n');
+  currentPrompt=tags;currentNeg=isNSFW?NEG_NSFW:NEG_SFW;
+  animateCard(rarity.label,false);
+  updateCardMeta(name,rarity.label,rarity.stars,false);
+  renderStats([{key:'Race',icon:race.icon||STAT_ICONS.Race,label:'RACE',value:race.label},{key:'HairColor',icon:STAT_ICONS.HairColor,label:'HAIR COLOR',value:hairCol.label},{key:'HairStyle',icon:STAT_ICONS.HairStyle,label:'HAIR STYLE',value:hairSty.label},{key:'Eyes',icon:STAT_ICONS.Eyes,label:'EYES',value:eyes.label},{key:'Physique',icon:STAT_ICONS.Physique,label:'PHYSIQUE',value:physique.label},{key:'Chest',icon:STAT_ICONS.Bust,label:'CHEST',value:bust.label},{key:'Legs',icon:STAT_ICONS.Legs,label:'LEGS',value:thighs.label||'Average'},{key:'Build',icon:STAT_ICONS.Build,label:'BUILD',value:hips.label||'Average'},{key:'Skin',icon:STAT_ICONS.Skin,label:'SKIN',value:skin.label},{key:'Expression',icon:STAT_ICONS.Expression,label:'EXPRESSION',value:expression.label},{key:'Outfit',icon:STAT_ICONS.Outfit,label:'OUTFIT',value:outfit.label},{key:'Accessory',icon:STAT_ICONS.Accessory,label:'ACCESSORY',value:acc.label},{key:'Scene',icon:STAT_ICONS.Scene,label:'SCENE',value:bg.split(',')[0]}]);
+  document.getElementById('promptBox').textContent=currentPrompt;
+  document.getElementById('negBox').textContent=currentNeg;
+}
+
+</script>
+</body>
+</html>
