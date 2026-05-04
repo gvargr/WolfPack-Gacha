@@ -340,6 +340,46 @@ const POSES_NSFW=[
   {label:'Bound',          tags:'arms restrained, kneeling,',              wWeight:2,  hWeight:2},
 ];
 function weightedRandomKey(arr,key){var t=arr.reduce(function(s,i){return s+(i[key]||0);},0),r=Math.random()*t;for(var i=0;i<arr.length;i++){r-=(arr[i][key]||0);if(r<=0)return arr[i];}return arr[arr.length-1];}
+const POSE_BIAS={
+  'Armour':           {'Standing':3,'Looking Back':2,'From Behind':2,'Against Wall':2,'Dynamic Action':3,'Dominant Stand':2,'Kneeling':0.3,'Prone Bone':0.1,'Spread Legs':0.1,'Presenting':0.1,'Riding':0.2,'On All Fours':0.2,'Lying Down':0.5,'Bound':0.2},
+  'Battle Outfit':    {'Standing':3,'Looking Back':2,'From Behind':2,'Against Wall':2,'Dynamic Action':3,'Dominant Stand':2,'Kneeling':0.3,'Prone Bone':0.1,'Spread Legs':0.1,'Presenting':0.1,'Riding':0.2,'On All Fours':0.2,'Lying Down':0.5,'Bound':0.2},
+  'Military Uniform': {'Standing':3,'Arms Crossed':2,'Looking Back':2,'From Behind':2,'Against Wall':2,'Dominant Stand':2,'Kneeling':0.3,'Prone Bone':0.1,'Spread Legs':0.1,'Presenting':0.1,'Riding':0.2,'On All Fours':0.2},
+  'Nude':             {'Lying Down':3,'On All Fours':3,'Presenting':3,'Prone Bone':3,'Spread Legs':3,'Riding':2,'Lying On Side':2,'Kneeling':2,'Bound':2,'Standing':0.7,'Dynamic Action':0.1,'Dominant Stand':0.3,'Arms Crossed':0.3},
+  'Topless':          {'Lying Down':2,'On All Fours':2,'Presenting':2,'Prone Bone':2,'Spread Legs':2,'Riding':2,'Lying On Side':2,'Leaning':2,'Standing':1,'Dynamic Action':0.2,'Dominant Stand':0.5},
+  'Lingerie':         {'Lying Down':3,'Lying On Side':3,'Kneeling':2,'Presenting':2,'Spread Legs':2,'Prone Bone':2,'Riding':2,'Leaning':2,'Against Wall':2,'Standing':1,'Dynamic Action':0.1,'Arms Crossed':0.3},
+  'See-Through':      {'Lying Down':2,'Lying On Side':2,'Kneeling':2,'Leaning':2,'Against Wall':2,'Presenting':2,'Spread Legs':2,'Standing':1.5,'Dynamic Action':0.2},
+  'Bikini':           {'Lying Down':2,'Lying On Side':2,'Sitting':2,'Leaning':2,'Standing':2,'Spread Legs':1.5,'Dynamic Action':0.3,'Dominant Stand':0.3,'Prone Bone':1.5},
+  'Underwear Only':   {'Lying Down':2,'Lying On Side':2,'Kneeling':2,'Leaning':2,'Against Wall':2,'Presenting':2,'Spread Legs':2,'Standing':1,'Dynamic Action':0.2,'Arms Crossed':0.3},
+  'Dress':            {'Standing':2,'Sitting':2,'Leaning':2,'Looking Back':2,'Lying On Side':1.5,'Dynamic Action':0.3,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.2,'Spread Legs':0.3,'Pinning Down':0.2},
+  'Kimono':           {'Standing':3,'Sitting':3,'Leaning':2,'Looking Back':2,'Dynamic Action':0.2,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.2,'Spread Legs':0.2,'Dominant Stand':0.3},
+  'Qipao':            {'Standing':3,'Sitting':2,'Leaning':2,'Looking Back':2,'Dynamic Action':0.2,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.2,'Spread Legs':0.2},
+  'Suit & Tie':       {'Standing':3,'Arms Crossed':2,'Leaning':2,'Looking Back':2,'Sitting':2,'Dynamic Action':0.3,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.2},
+  'Yukata':           {'Standing':3,'Sitting':3,'Leaning':2,'Looking Back':2,'Dynamic Action':0.2,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.2},
+  'Priest/Clergy':    {'Standing':3,'Kneeling':2,'Sitting':2,'Looking Back':1.5,'Dynamic Action':0.2,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.1,'Spread Legs':0.1},
+  'Casual':           {'Standing':2,'Sitting':2,'Leaning':2,'Arms Crossed':2,'Looking Back':1.5,'Dynamic Action':1.5,'On All Fours':0.4,'Prone Bone':0.3,'Presenting':0.4,'Dominant Stand':0.5},
+  'Streetwear':       {'Standing':2,'Sitting':2,'Leaning':2,'Arms Crossed':2,'Looking Back':1.5,'Dynamic Action':1.5,'On All Fours':0.4,'Prone Bone':0.3,'Presenting':0.4,'Dominant Stand':0.5},
+  'Crop Top & Shorts':{'Standing':2,'Sitting':2,'Leaning':2,'Looking Back':2,'Spread Legs':1.5,'On All Fours':0.5,'Prone Bone':0.5,'Dynamic Action':1.5},
+  'School Uniform':   {'Standing':2,'Sitting':2,'Leaning':2,'Arms Crossed':1.5,'Looking Back':2,'Dynamic Action':1.5,'On All Fours':0.4,'Prone Bone':0.3,'Presenting':0.4},
+  'Open Shirt':       {'Standing':2,'Leaning':2,'Against Wall':2,'Arms Crossed':1.5,'Dominant Stand':2,'Sitting':1.5,'On All Fours':0.5,'Prone Bone':0.4,'Presenting':0.4},
+  'Maid Outfit':      {'Kneeling':2,'Leaning':2,'Looking Back':2,'Against Wall':2,'Sitting':2,'Presenting':1.5,'Spread Legs':1.5,'Dynamic Action':0.3,'Dominant Stand':0.3},
+  'Gothic Lolita':    {'Standing':2,'Sitting':2,'Kneeling':2,'Leaning':2,'Looking Back':2,'Against Wall':1.5,'Dynamic Action':0.2,'On All Fours':0.3,'Prone Bone':0.2},
+  'Bodysuit':         {'Standing':2,'Leaning':2,'Against Wall':2,'From Behind':2,'Looking Back':2,'Kneeling':1.5,'Dynamic Action':1.5,'Prone Bone':1,'Presenting':1.5},
+  'Idol Costume':     {'Standing':3,'Sitting':2,'Leaning':2,'Looking Back':2,'Dynamic Action':2,'On All Fours':0.2,'Prone Bone':0.1,'Presenting':0.2,'Spread Legs':0.3},
+  'Sundress':         {'Standing':2,'Sitting':2,'Leaning':2,'Looking Back':2,'Lying On Side':1.5,'Lying Down':1.5,'Dynamic Action':0.5,'On All Fours':0.2,'Prone Bone':0.2,'Presenting':0.3},
+  'Gothic':           {'Against Wall':3,'Leaning':2,'Kneeling':2,'Looking Back':2,'Standing':2,'Lying On Side':1.5,'Dynamic Action':0.5,'On All Fours':0.3,'Prone Bone':0.2},
+  'Witch Outfit':     {'Standing':2,'Leaning':2,'Kneeling':2,'Looking Back':2,'Against Wall':1.5,'Dynamic Action':1,'On All Fours':0.3,'Prone Bone':0.2},
+  'Trench Coat':      {'Standing':3,'Leaning':3,'Against Wall':2,'Looking Back':2,'Arms Crossed':2,'Dynamic Action':0.5,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.2},
+  'Fantasy Robes':    {'Standing':2,'Leaning':2,'Looking Back':2,'Kneeling':1.5,'Dynamic Action':1.5,'On All Fours':0.2,'Prone Bone':0.1,'Presenting':0.2,'Spread Legs':0.3},
+  'Lab Coat':         {'Standing':2,'Arms Crossed':2,'Leaning':2,'Sitting':2,'Looking Back':1.5,'Dynamic Action':0.5,'On All Fours':0.1,'Prone Bone':0.1,'Presenting':0.1,'Spread Legs':0.1},
+  'Shirtless':        {'Standing':2,'Against Wall':2,'Dominant Stand':2,'Leaning':2,'Arms Crossed':2,'On All Fours':1.5,'Prone Bone':1.5,'Pinning Down':2,'Lying Down':1.5},
+};
+function pickPose(pool, weightKey, outfitLabel){
+  var bias=POSE_BIAS[outfitLabel]||{};
+  var adjusted=pool.map(function(p){var b=bias[p.label];var w=(p[weightKey]||0)*(b!==undefined?b:1);return {pose:p,w:Math.max(w,0)};});
+  var t=adjusted.reduce(function(s,i){return s+i.w;},0),r=Math.random()*t;
+  for(var i=0;i<adjusted.length;i++){r-=adjusted[i].w;if(r<=0)return adjusted[i].pose;}
+  return adjusted[adjusted.length-1].pose;
+}
 function weightedRandom(arr){var t=arr.reduce(function(s,i){return s+(i.weight||1);},0),r=Math.random()*t;for(var i=0;i<arr.length;i++){r-=(arr[i].weight||1);if(r<=0)return arr[i];}return arr[arr.length-1];}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function pickBg(race,outfit,rarity){var bgs=RACE_BG[race]||RACE_BG['Human'],bg=bgs[Math.floor(Math.random()*bgs.length)],mod=OUTFIT_BG_MOD[outfit]||'';if(mod)bg=mod+' '+bg;return(bg+' '+(RARITY_BG_QUALITY[rarity]||'')).trim();}
@@ -386,14 +426,14 @@ const NEG_SFW='lowres, bad anatomy, bad hands, missing fingers, extra fingers, f
 const NEG_NSFW='lowres, bad anatomy, bad hands, missing fingers, extra fingers, fused fingers, bad face, ugly, deformed, mutated, poorly drawn face, poorly drawn hands, blurry, watermark, signature, text, logo, cropped, worst quality, low quality, normal quality, jpeg artifacts, extra limbs, missing limbs, floating limbs, disconnected limbs, malformed hands, long neck, bad proportions, gross proportions, (female:1.3), breasts';
 function roll(){
   rollCount++;document.getElementById('rollCount').textContent=rollCount;
-  var name=pick(NAMES),race=weightedRandom(RACES),hairCol=weightedRandom(HAIR_COLORS),hairSty=weightedRandom(HAIR_STYLES),eyes=weightedRandom(EYE_COLORS),physique=weightedRandom(PHYSIQUES),bust=weightedRandom(isNSFW?BUST_NSFW:BUST_SFW),thighs=weightedRandom(THIGHS),hips=weightedRandom(HIPS),skin=weightedRandom(SKIN),expression=weightedRandom(EXPRESSIONS),outfit=weightedRandom(isNSFW?OUTFITS_NSFW:OUTFITS_SFW),acc=weightedRandom(ACCESSORIES),pose=isNSFW?weightedRandomKey(POSES_NSFW,'hWeight'):weightedRandom(POSES_SFW),rarity=weightedRandom(RARITIES);
+  var name=pick(NAMES),race=weightedRandom(RACES),hairCol=weightedRandom(HAIR_COLORS),hairSty=weightedRandom(HAIR_STYLES),eyes=weightedRandom(EYE_COLORS),physique=weightedRandom(PHYSIQUES),bust=weightedRandom(isNSFW?BUST_NSFW:BUST_SFW),thighs=weightedRandom(THIGHS),hips=weightedRandom(HIPS),skin=weightedRandom(SKIN),expression=weightedRandom(EXPRESSIONS),outfit=weightedRandom(isNSFW?OUTFITS_NSFW:OUTFITS_SFW),acc=weightedRandom(ACCESSORIES),pose=isNSFW?pickPose(POSES_NSFW,'hWeight',outfit.label):pickPose(POSES_SFW,'weight',outfit.label),rarity=weightedRandom(RARITIES);
   var bg=pickBg(race.label,outfit.label,rarity.label),rQ=RARITY_QUALITY[rarity.label],rB=showBorder?(RARITY_BORDER[rarity.label]||''):'';
   lastRoll={raceTags:race.tags,skinTags:skin.tags,hairColTags:hairCol.tags,hairStyTags:hairSty.tags,eyeTags:eyes.tags,physiqueTags:physique.tags,bustTags:bust.tags,thighTags:thighs.tags,hipTags:hips.tags,expressionTags:expression.tags,outfitTags:outfit.tags,accTags:acc.tags,poseTags:pose.tags,bg:bg,rQ:rQ,rarity:rarity};
   var tags=[race.tags,skin.tags,hairCol.tags,hairSty.tags,eyes.tags,physique.tags,bust.tags,thighs.tags||null,hips.tags||null,expression.tags,outfit.tags,acc.tags||null,pose.tags||null,'solo,',bg,rB,rQ].filter(function(t){return t&&t.trim();}).join('\n');
   currentPrompt=tags;currentNeg=isNSFW?NEG_NSFW:NEG_SFW;
   animateCard(rarity.label,false);
   updateCardMeta(name,rarity.label,rarity.stars,false);
-  renderStats([{key:'Race',icon:race.icon||STAT_ICONS.Race,label:'RACE',value:race.label},{key:'HairColor',icon:STAT_ICONS.HairColor,label:'HAIR COLOR',value:hairCol.label},{key:'HairStyle',icon:STAT_ICONS.HairStyle,label:'HAIR STYLE',value:hairSty.label},{key:'Eyes',icon:STAT_ICONS.Eyes,label:'EYES',value:eyes.label},{key:'Physique',icon:STAT_ICONS.Physique,label:'PHYSIQUE',value:physique.label},{key:'Chest',icon:STAT_ICONS.Bust,label:'CHEST',value:bust.label},{key:'Legs',icon:STAT_ICONS.Legs,label:'LEGS',value:thighs.label||'Average'},{key:'Build',icon:STAT_ICONS.Build,label:'BUILD',value:hips.label||'Average'},{key:'Skin',icon:STAT_ICONS.Skin,label:'SKIN',value:skin.label},{key:'Expression',icon:STAT_ICONS.Expression,label:'EXPRESSION',value:expression.label},{key:'Outfit',icon:STAT_ICONS.Outfit,label:'OUTFIT',value:outfit.label},{key:'Accessory',icon:STAT_ICONS.Accessory,label:'ACCESSORY',value:acc.label},{key:'Pose',icon:STAT_ICONS.Pose,label:'POSE',value:pose.label},{key:'Scene',icon:STAT_ICONS.Scene,label:'SCENE',value:bg.split(',')[0]}]);
+  renderStats([{key:'Race',icon:race.icon||STAT_ICONS.Race,label:'RACE',value:race.label},{key:'HairColor',icon:STAT_ICONS.HairColor,label:'HAIR COLOR',value:hairCol.label},{key:'HairStyle',icon:STAT_ICONS.HairStyle,label:'HAIR STYLE',value:hairSty.label},{key:'Eyes',icon:STAT_ICONS.Eyes,label:'EYES',value:eyes.label},{key:'Physique',icon:STAT_ICONS.Physique,label:'PHYSIQUE',value:physique.label},{key:'Chest',icon:STAT_ICONS.Bust,label:'CHEST',value:bust.label},{key:'Legs',icon:STAT_ICONS.Legs,label:'LEGS',value:thighs.label||'Average'},{key:'Build',icon:STAT_ICONS.Build,label:'BUILD',value:hips.label||'Average'},{key:'Skin',icon:STAT_ICONS.Skin,label:'SKIN',value:skin.label},{key:'Expression',icon:STAT_ICONS.Expression,label:'EXPRESSION',value:expression.label},{key:'Outfit',icon:STAT_ICONS.Outfit,label:'OUTFIT',value:outfit.label},{key:'Accessory',icon:STAT_ICONS.Accessory,label:'ACCESSORY',value:acc.label},{key:'Scene',icon:STAT_ICONS.Scene,label:'SCENE',value:bg.split(',')[0]}]);
   document.getElementById('promptBox').textContent=currentPrompt;
   document.getElementById('negBox').textContent=currentNeg;
 }
