@@ -1,20 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        // 60/40 weighted random
-        const rand = Math.random();
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WolfPack // Gacha</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Share+Tech+Mono&display=swap');
+* { box-sizing:border-box; margin:0; padding:0; }
+:root { --bg:#110118; --accent:#fb00ff; --accent2:#7033ff; --text3:#7033ff; }
+body {
+  background:var(--bg); min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Share Tech Mono',monospace; overflow:hidden;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 30% 40%,rgba(112,51,255,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse at 70% 60%,rgba(251,0,255,0.08) 0%,transparent 50%);
+  pointer-events:none;
+}
+.wrap { position:relative; z-index:1; text-align:center; }
+.title {
+  font-family:'Rajdhani',sans-serif; font-size:14px; letter-spacing:5px;
+  color:var(--text3); margin-bottom:8px;
+}
+.subtitle {
+  font-family:'Rajdhani',sans-serif; font-size:48px; font-weight:700;
+  letter-spacing:8px; color:var(--accent);
+  text-shadow:0 0 40px rgba(251,0,255,0.5);
+  animation:pulse 3s ease-in-out infinite;
+  margin-bottom:48px;
+}
+@keyframes pulse {
+  0%,100%{text-shadow:0 0 40px rgba(251,0,255,0.5);}
+  50%{text-shadow:0 0 80px rgba(251,0,255,0.9),0 0 120px rgba(251,0,255,0.3);}
+}
+.coin-wrap { margin-bottom:48px; }
+.coin {
+  width:100px; height:100px; position:relative;
+  font-size:48px; line-height:100px; text-align:center;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-12px);}
+}
+.coin.flip { animation:coinFlip 0.8s ease-out forwards; }
+@keyframes coinFlip {
+  0%{transform:rotateY(0) translateY(0);}
+  40%{transform:rotateY(720deg) translateY(-30px);}
+  100%{transform:rotateY(1440deg) translateY(0);}
+}
+.btn-pull {
+  background:transparent; border:2px solid var(--accent); color:var(--accent);
+  font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700;
+  letter-spacing:6px; padding:18px 56px; cursor:pointer;
+  text-transform:uppercase; position:relative; overflow:hidden;
+  transition:all 0.2s;
+}
+.btn-pull::before {
+  content:''; position:absolute; inset:0; background:var(--accent);
+  transform:scaleX(0); transform-origin:left; transition:transform 0.2s; z-index:-1;
+}
+.btn-pull:hover { color:var(--bg); }
+.btn-pull:hover::before { transform:scaleX(1); }
+.btn-pull:active { transform:scale(0.97); }
+.result { margin-top:28px; font-size:11px; letter-spacing:3px; color:var(--text3); min-height:20px; }
+.direct-links { margin-top:40px; display:flex; gap:20px; justify-content:center; }
+.direct-link {
+  color:var(--text3); text-decoration:none; font-size:10px; letter-spacing:2px;
+  border-bottom:1px solid var(--text3); padding-bottom:2px;
+  transition:color 0.15s, border-color 0.15s;
+}
+.direct-link:hover { color:var(--accent); border-color:var(--accent); }
 
-        if (rand < 0.6) {
-            window.location.href = "waifu-gacha.html"; // 60% chance
-        } else {
-            window.location.href = "husbando-gacha.html"; // 40% chance
-        }
-    </script>
+.countdown {
+  font-size:10px; letter-spacing:2px; color:rgba(112,51,255,0.5);
+  margin-top:10px; transition:opacity 0.3s;
+}
+.countdown.hidden { opacity:0; }
+</style>
 </head>
 <body>
-    <p>WolfPack // redirecting...</p>
+<div class="wrap">
+  <div class="title">// WOLFPACK //</div>
+  <div class="subtitle">GACHA</div>
+  <div class="coin-wrap">
+    <div class="coin" id="coin">🪙</div>
+  </div>
+  <button class="btn-pull" onclick="flipCoin()">✦ FLIP ✦</button>
+  <div class="result" id="result"></div>
+  <div class="countdown" id="countdown">auto-flipping in <span id="countNum">10</span>s</div>
+  <div class="direct-links">
+    <a class="direct-link" href="waifu-gacha.html">WAIFU →</a>
+    <a class="direct-link" href="husbando-gacha.html">HUSBANDO →</a>
+  </div>
+</div>
+<script>
+var flipping = false;
+function flipCoin() {
+  if(flipping) return;
+  flipping = true;
+  var coin = document.getElementById('coin');
+  var result = document.getElementById('result');
+  result.textContent = '';
+  coin.className = 'coin flip';
+  coin.textContent = '🪙';
+  setTimeout(function() {
+    var isWaifu = Math.random() < 0.6;
+    coin.textContent = isWaifu ? '♀' : '♂';
+    coin.style.color = isWaifu ? '#fb00ff' : '#00d4ff';
+    result.textContent = isWaifu ? 'WAIFU...' : 'HUSBANDO...';
+    setTimeout(function() {
+      window.location.href = isWaifu ? 'waifu-gacha.html' : 'husbando-gacha.html';
+    }, 600);
+  }, 800);
+}
+
+// Auto-flip countdown
+var countdownTimer = null;
+var countdownVal = 10;
+
+function startCountdown() {
+  countdownVal = 10;
+  var numEl = document.getElementById('countNum');
+  var cdEl = document.getElementById('countdown');
+  if (numEl) numEl.textContent = countdownVal;
+  if (cdEl) cdEl.classList.remove('hidden');
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(function() {
+    countdownVal--;
+    if (numEl) numEl.textContent = countdownVal;
+    if (countdownVal <= 0) {
+      clearInterval(countdownTimer);
+      if (cdEl) cdEl.classList.add('hidden');
+      flipCoin();
+    }
+  }, 1000);
+}
+
+// Cancel countdown if user clicks flip manually
+var origFlip = flipCoin;
+flipCoin = function() {
+  clearInterval(countdownTimer);
+  var cdEl = document.getElementById('countdown');
+  if (cdEl) cdEl.classList.add('hidden');
+  origFlip();
+};
+
+window.addEventListener('load', function() {
+  startCountdown();
+});
+</script>
 </body>
 </html>
