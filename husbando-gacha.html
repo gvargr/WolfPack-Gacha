@@ -208,16 +208,38 @@ body::before {
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <button class="modal-x" onclick="closeModal()">✕</button>
+    <button class="modal-x" onclick="closeModal()">&#x2715;</button>
     <div class="modal-title">WOLFPACK // GACHA</div>
     <div class="modal-sub">// COLLECTOR CARD GENERATOR</div>
     <div class="modal-body">
-      <p>This tool generates a <strong>randomised character</strong> as a collector card -- complete with rarity, holographic effects, and an assembled prompt ready to use in Stable Diffusion.</p>
-      <p>Each <strong>PULL</strong> rolls a new character with randomised race, appearance, outfit, and scene. The assembled positive and negative prompts are displayed below the card and can be copied with a single click.</p>
-      <p>The <strong>rarity system</strong> affects card visuals and prompt quality. Common cards get a clean result. Legendary cards get cinematic lighting, atmospheric depth, and an ornate collector frame -- all baked into the prompt.</p>
-      <p>Toggle <strong>SFW / NSFW</strong> in the header to unlock a wider outfit pool and more explicit prompt tags. The negative prompt updates automatically to match.</p>
-      <p>The <strong>background scene</strong> is weighted by race and refined by outfit -- an Elf in Fantasy Robes gets a moonlit elven grove with floating scrolls. A Vampire in a Gothic outfit gets a candlelit dungeon or baroque ballroom.</p>
-      <p>This is a <strong>v3 prototype</strong> -- the full version will be integrated into the WolfPack OC Builder as a modal pull system with character saving.</p>
+
+      <p><strong>What is this?</strong><br>
+      A randomised anime character generator that builds a complete Stable Diffusion prompt and displays results as a holographic collector card. Each pull produces a unique character with a matching background scene and rarity-scaled quality tags.</p>
+
+      <p><strong>Age Policy</strong><br>
+      All generated characters are designed and intended to be 18 years of age or older. The physique, naming, and prompt tags are built with adult characters in mind. NSFW mode is for adult content between adult characters only.</p>
+
+      <p><strong>How to use</strong><br>
+      1. Toggle <strong>SFW / NSFW</strong> in the header to set your content level.<br>
+      2. Click <strong>PULL</strong> to generate a random character.<br>
+      3. Re-roll as many times as you like -- each pull is free.<br>
+      4. Click <strong>COPY PROMPT</strong> and paste into SwarmUI, A1111, ComfyUI or Forge.<br>
+      5. Click <strong>COPY NEG</strong> and paste into the negative prompt field.<br>
+      6. Click <strong>SAVE CARD</strong> to download the card as a PNG image.</p>
+
+      <p><strong>Rarity</strong><br>
+      Rarity affects both the card visuals and the prompt quality tags.<br>
+      Common &rarr; clean result &nbsp;|&nbsp; Rare &rarr; cinematic lighting &nbsp;|&nbsp; Legendary &rarr; masterpiece quality, god rays, epic framing and an ornate gilded collector border -- all baked directly into the prompt.</p>
+
+      <p><strong>Background &amp; Scene</strong><br>
+      The background is weighted by race and refined by outfit. An Elf in Fantasy Robes gets a moonlit elven grove with floating scrolls. A Vampire in a Gothic outfit gets a candlelit dungeon. The scene tag is visible on the card and included in the prompt.</p>
+
+      <p><strong>NSFW &amp; Futanari</strong><br>
+      NSFW mode unlocks a wider outfit pool with explicit tags and updates the negative prompt automatically. On Waifu pulls there is a 15&#37; chance of a Futanari roll -- this boosts the rarity one tier and adds a FUTA badge to the card.</p>
+
+      <p><strong>Save Card</strong><br>
+      Downloads a PNG of the collector card with all stats, rarity effects, corner gems and star strip. Works fully offline -- no internet connection required.</p>
+
     </div>
     <button class="modal-close" onclick="closeModal()">[ GOT IT ]</button>
   </div>
@@ -269,6 +291,7 @@ body::before {
     <button class="btn-gacha" onclick="roll()">✦ PULL ✦</button>
     <button class="btn-copy" onclick="copyPrompt()">[ COPY PROMPT ]</button>
     <button class="btn-copy" onclick="copyNeg()">[ COPY NEG ]</button>
+    <button class="btn-copy" onclick="downloadCard()">[ SAVE CARD ]</button>
   </div>
   <div class="roll-counter">TOTAL PULLS: <span id="rollCount">0</span></div>
   <div class="prompt-section">
@@ -315,7 +338,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 const NAMES=['Aeden','Alaric','Aldric','Alec','Aleksei','Alistair','Anders','Andor','Ansel','Archer','Arden','Ares','Arion','Arlen','Arno','Aron','Asher','Ashton','Aslan','Axel','Azar','Azrael','Bastian','Beau','Beck','Beckett','Bjorn','Blade','Blaine','Blake','Blaze','Bowen','Bram','Brand','Brent','Brice','Brion','Brock','Brom','Bryn','Cade','Cael','Caiden','Cain','Caius','Cale','Calen','Callan','Calum','Calvin','Caspar','Cassian','Cassius','Cato','Cayden','Cedric','Cian','Clark','Clovis','Conan','Connor','Conrad','Corin','Corvus','Cullen','Dalan','Dale','Dalton','Damian','Damon','Dane','Darian','Darius','Darren','Davin','Davis','Declan','Derek','Dev','Devlin','Devon','Dorian','Drake','Draven','Drew','Dune','Duran','Dylan','Eamon','Egan','Elias','Emeric','Emil','Emrys','Enric','Erasmus','Eric','Evan','Everett','Fabian','Felix','Fenix','Fenric','Finlay','Finn','Fionn','Flint','Flynn','Gareth','Garen','Garth','Gavin','Gawain','Gideon','Glen','Godric','Goran','Grant','Graven','Graydon','Griffin','Gunnar','Gustav','Hadric','Harald','Harlan','Hawk','Hayden','Helric','Henrik','Hudson','Hugo','Iain','Ian','Isaac','Ivan','Jace','Jaden','Jagger','Jasper','Jett','Jonas','Jordan','Julian','Julius','Kael','Kaiden','Kale','Kane','Kaspar','Kato','Kayden','Kazimir','Keane','Kieran','Killian','Knox','Koen','Kylan','Landen','Landon','Laszlo','Leo','Leon','Lewis','Liam','Logan','Luca','Lucian','Lukas','Magnus','Malik','Marek','Marius','Matthias','Maxim','Maxon','Maxwell','Mikael','Milan','Nash','Nial','Niall','Odin','Orion','Owen','Pascal','Pierce','Quinn','Rafe','Raiden','Reed','Reeve','Rex','Rhett','Rhys','Roland','Ronan','Rowan','Rune','Ryker','Rylan','Saxon','Seamus','Seth','Silas','Soren','Stellan','Sterling','Sven','Thane','Theron','Thorin','Tobin','Tristan','Tylan','Ulric','Uther','Valen','Vesper','Victor','Wilder','Wulf','Wylan','Xander','Xavier','Zander','Zevic','Zidan'];
-const RACES=[{label:'Human',icon:'\u25ce',tags:'1boy, human,',weight:30},{label:'Elf',icon:'\u2701',tags:'1boy, elf, pointed ears,',weight:15},{label:'Dark Elf',icon:'\u2703',tags:'1boy, dark elf, pointed ears, dark skin,',weight:10},{label:'Neko',icon:'\U0001F43E',tags:'1boy, cat boy, neko, cat ears, cat tail,',weight:10},{label:'Kitsune',icon:'\U0001F98A',tags:'1boy, fox boy, kitsune, fox ears, fox tail,',weight:7},{label:'Oni',icon:'\u26a1',tags:'1boy, oni, oni horns,',weight:7},{label:'Vampire',icon:'\U0001FA78',tags:'1boy, vampire, pale skin, fangs,',weight:6},{label:'Demi-Human',icon:'\u25d1',tags:'1boy, demi-human,',weight:8},{label:'Android',icon:'\u25c8',tags:'1boy, android, mechanical joints,',weight:4},{label:'Dragon Boy',icon:'\U0001F409',tags:'1boy, dragon boy, dragon horns, dragon tail, scales,',weight:3},{label:'Demon',icon:'\U0001F608',tags:'1boy, demon, demon horns, demon tail,',weight:4},{label:'Beastman',icon:'\U0001F43A',tags:'1boy, beastman, wolf ears, wolf tail,',weight:4}];
+const RACES=[{label:'Human',icon:'\u25ce',tags:'1boy, human,',weight:30},{label:'Elf',icon:'\u2701',tags:'1boy, elf, pointed ears,',weight:15},{label:'Dark Elf',icon:'\u2703',tags:'1boy, dark elf, pointed ears, dark skin,',weight:10},{label:'Neko',icon:'🐾',tags:'1boy, cat boy, neko, cat ears, cat tail,',weight:10},{label:'Kitsune',icon:'🦊',tags:'1boy, fox boy, kitsune, fox ears, fox tail,',weight:7},{label:'Oni',icon:'\u26a1',tags:'1boy, oni, oni horns,',weight:7},{label:'Vampire',icon:'🩸',tags:'1boy, vampire, pale skin, fangs,',weight:6},{label:'Demi-Human',icon:'\u25d1',tags:'1boy, demi-human,',weight:8},{label:'Android',icon:'\u25c8',tags:'1boy, android, mechanical joints,',weight:4},{label:'Dragon Boy',icon:'🐉',tags:'1boy, dragon boy, dragon horns, dragon tail, scales,',weight:3},{label:'Demon',icon:'😈',tags:'1boy, demon, demon horns, demon tail,',weight:4},{label:'Beastman',icon:'🐺',tags:'1boy, beastman, wolf ears, wolf tail,',weight:4}];
 const HAIR_COLORS=[{label:'Black',tags:'black hair,',weight:14},{label:'Brown',tags:'brown hair,',weight:12},{label:'Blonde',tags:'blonde hair,',weight:12},{label:'Red',tags:'red hair,',weight:10},{label:'Auburn',tags:'auburn hair,',weight:6},{label:'Silver',tags:'silver hair, white hair,',weight:8},{label:'Purple',tags:'purple hair,',weight:7},{label:'Blue',tags:'blue hair,',weight:6},{label:'Pink',tags:'pink hair,',weight:4},{label:'Green',tags:'green hair,',weight:4},{label:'White',tags:'white hair,',weight:5},{label:'Dark Blue',tags:'dark blue hair,',weight:5},{label:'Gradient',tags:'gradient hair, multicolored hair,',weight:4},{label:'Ash',tags:'ash hair, grey hair,',weight:5}];
 const HAIR_STYLES=[{label:'Short Neat',tags:'short hair, neat cut,',weight:14},{label:'Medium Swept',tags:'medium hair, swept back,',weight:12},{label:'Long Straight',tags:'long hair, straight hair,',weight:10},{label:'Undercut',tags:'undercut, shaved sides,',weight:8},{label:'Ponytail',tags:'long hair, ponytail,',weight:8},{label:'Messy',tags:'messy hair, disheveled hair,',weight:8},{label:'Slicked Back',tags:'slicked back hair,',weight:7},{label:'Braided',tags:'braided hair,',weight:5},{label:'Spiky',tags:'spiky hair,',weight:8},{label:'Half-Up',tags:'half-up hair,',weight:5},{label:'Wild',tags:'long hair, wild hair,',weight:6},{label:'Bun',tags:'hair bun, man bun,',weight:5},{label:'Curtains',tags:'curtains haircut, center part,',weight:4}];
 const EYE_COLORS=[{label:'Brown',tags:'brown eyes,',weight:14},{label:'Blue',tags:'blue eyes,',weight:12},{label:'Green',tags:'green eyes,',weight:10},{label:'Grey',tags:'grey eyes,',weight:9},{label:'Violet',tags:'violet eyes, purple eyes,',weight:7},{label:'Red',tags:'red eyes,',weight:7},{label:'Gold',tags:'gold eyes, amber eyes,',weight:7},{label:'Teal',tags:'teal eyes,',weight:5},{label:'Silver',tags:'silver eyes,',weight:5},{label:'Black',tags:'black eyes,',weight:6},{label:'Heterochromia',tags:'heterochromia, odd-colored eyes,',weight:3},{label:'Crimson',tags:'crimson eyes,',weight:3}];
@@ -342,6 +365,223 @@ function roll(){
   renderStats([{key:'Race',icon:race.icon||STAT_ICONS.Race,label:'RACE',value:race.label},{key:'HairColor',icon:STAT_ICONS.HairColor,label:'HAIR COLOR',value:hairCol.label},{key:'HairStyle',icon:STAT_ICONS.HairStyle,label:'HAIR STYLE',value:hairSty.label},{key:'Eyes',icon:STAT_ICONS.Eyes,label:'EYES',value:eyes.label},{key:'Physique',icon:STAT_ICONS.Physique,label:'PHYSIQUE',value:physique.label},{key:'Chest',icon:STAT_ICONS.Bust,label:'CHEST',value:bust.label},{key:'Legs',icon:STAT_ICONS.Legs,label:'LEGS',value:thighs.label||'Average'},{key:'Build',icon:STAT_ICONS.Build,label:'BUILD',value:hips.label||'Average'},{key:'Skin',icon:STAT_ICONS.Skin,label:'SKIN',value:skin.label},{key:'Expression',icon:STAT_ICONS.Expression,label:'EXPRESSION',value:expression.label},{key:'Outfit',icon:STAT_ICONS.Outfit,label:'OUTFIT',value:outfit.label},{key:'Accessory',icon:STAT_ICONS.Accessory,label:'ACCESSORY',value:acc.label},{key:'Scene',icon:STAT_ICONS.Scene,label:'SCENE',value:bg.split(',')[0]}]);
   document.getElementById('promptBox').textContent=currentPrompt;
   document.getElementById('negBox').textContent=currentNeg;
+}
+
+
+function downloadCard() {
+  var name = document.getElementById('charName').textContent || 'card';
+  var rarity = document.getElementById('card').getAttribute('data-rarity') || 'Common';
+  var isFuta = document.getElementById('card').getAttribute('data-futa') === 'true';
+  var stars = document.getElementById('cardStars').textContent || '';
+
+  // Gather stat rows
+  var statRows = [];
+  document.querySelectorAll('.stat-row.visible').forEach(function(row) {
+    var icon  = row.querySelector('.stat-icon')  ? row.querySelector('.stat-icon').textContent  : '';
+    var label = row.querySelector('.stat-label') ? row.querySelector('.stat-label').textContent : '';
+    var val   = row.querySelector('.stat-value') ? row.querySelector('.stat-value').textContent : '';
+    statRows.push({ icon: icon, label: label, val: val, futa: row.classList.contains('futa-row') });
+  });
+
+  // Rarity colours
+  var rarityColors = {
+    Common:    { border: 'rgba(112,51,255,0.7)',  badge: '#7033ff', glow: 'rgba(112,51,255,0.3)'   },
+    Uncommon:  { border: '#00d4ff',               badge: '#00d4ff', glow: 'rgba(0,212,255,0.4)'    },
+    Rare:      { border: '#00d4ff',               badge: '#00d4ff', glow: 'rgba(0,212,255,0.6)'    },
+    Epic:      { border: '#b44fff',               badge: '#b44fff', glow: 'rgba(180,79,255,0.6)'   },
+    Legendary: { border: '#ff6b00',               badge: '#ff6b00', glow: 'rgba(255,107,0,0.7)'    },
+  };
+  var rc = rarityColors[rarity] || rarityColors['Common'];
+
+  var scale = 2;
+  var W = 520, H = 420 + statRows.length * 0;
+  // Calculate needed height
+  var rowH = 30, headerH = 120, footerH = 50;
+  var colRows = Math.ceil(statRows.length / 2);
+  H = headerH + colRows * rowH + footerH + 40;
+  H = Math.max(H, 380);
+
+  var canvas = document.createElement('canvas');
+  canvas.width  = W * scale;
+  canvas.height = H * scale;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  // Background
+  var bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  if (rarity === 'Legendary') {
+    bgGrad.addColorStop(0, 'rgba(20,8,0,0.98)');
+    bgGrad.addColorStop(0.5, '#1a1e28');
+    bgGrad.addColorStop(1, 'rgba(20,8,0,0.98)');
+  } else if (rarity === 'Epic') {
+    bgGrad.addColorStop(0, '#200c32');
+    bgGrad.addColorStop(0.5, 'rgba(25,10,40,0.98)');
+    bgGrad.addColorStop(1, '#1a1e28');
+  } else if (rarity === 'Rare') {
+    bgGrad.addColorStop(0, '#200c32');
+    bgGrad.addColorStop(0.5, 'rgba(0,30,50,0.95)');
+    bgGrad.addColorStop(1, '#1a1e28');
+  } else {
+    bgGrad.addColorStop(0, '#200c32');
+    bgGrad.addColorStop(1, '#1a1e28');
+  }
+  roundRect(ctx, 0, 0, W, H, 10);
+  ctx.fillStyle = bgGrad;
+  ctx.fill();
+
+  // Outer glow border
+  ctx.shadowColor = rc.glow;
+  ctx.shadowBlur  = rarity === 'Legendary' ? 30 : rarity === 'Epic' ? 24 : 16;
+  roundRect(ctx, 2, 2, W-4, H-4, 9);
+  ctx.strokeStyle = rc.border;
+  ctx.lineWidth   = rarity === 'Legendary' || rarity === 'Epic' ? 2.5 : 2;
+  ctx.stroke();
+  ctx.shadowBlur  = 0;
+
+  // Inner inset border
+  roundRect(ctx, 8, 8, W-16, H-16, 7);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth   = 1;
+  ctx.stroke();
+
+  // Holographic shimmer stripe (for Rare+)
+  if (rarity === 'Rare' || rarity === 'Epic' || rarity === 'Legendary') {
+    var holoGrad = ctx.createLinearGradient(0, 0, W, H);
+    holoGrad.addColorStop(0,    'rgba(255,0,128,0.06)');
+    holoGrad.addColorStop(0.25, 'rgba(255,200,0,0.06)');
+    holoGrad.addColorStop(0.5,  'rgba(0,255,128,0.06)');
+    holoGrad.addColorStop(0.75, 'rgba(0,128,255,0.06)');
+    holoGrad.addColorStop(1,    'rgba(128,0,255,0.06)');
+    roundRect(ctx, 2, 2, W-4, H-4, 9);
+    ctx.fillStyle = holoGrad;
+    ctx.fill();
+  }
+
+  // Passive shimmer diagonal highlight
+  var shimGrad = ctx.createLinearGradient(W*0.3, 0, W*0.7, H);
+  shimGrad.addColorStop(0,   'transparent');
+  shimGrad.addColorStop(0.45,'transparent');
+  shimGrad.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+  shimGrad.addColorStop(0.55,'transparent');
+  shimGrad.addColorStop(1,   'transparent');
+  roundRect(ctx, 2, 2, W-4, H-4, 9);
+  ctx.fillStyle = shimGrad;
+  ctx.fill();
+
+  // Corner gems
+  var gemR = 5;
+  var gemPositions = [[14,14],[W-14,14],[14,H-20],[W-14,H-20]];
+  gemPositions.forEach(function(pos) {
+    ctx.beginPath();
+    ctx.arc(pos[0], pos[1], gemR, 0, Math.PI*2);
+    ctx.shadowColor = rc.border;
+    ctx.shadowBlur  = rarity === 'Legendary' || rarity === 'Epic' ? 10 : 6;
+    ctx.fillStyle   = rc.border;
+    ctx.fill();
+    ctx.shadowBlur  = 0;
+  });
+
+  // Character name
+  ctx.font      = 'bold 32px Rajdhani, sans-serif';
+  ctx.fillStyle = '#fb00ff';
+  ctx.shadowColor = 'rgba(251,0,255,0.4)';
+  ctx.shadowBlur  = 12;
+  ctx.fillText(name, 28, 70);
+  ctx.shadowBlur  = 0;
+
+  // Rarity badge
+  var badgeX = W - 28;
+  var badgeText = rarity.toUpperCase();
+  ctx.font = '11px Share Tech Mono, monospace';
+  var bw = ctx.measureText(badgeText).width + 20;
+  var bh = 24;
+  var bx = badgeX - bw;
+  var by = 46;
+  ctx.strokeStyle = rc.badge;
+  ctx.lineWidth   = 1;
+  ctx.strokeRect(bx, by, bw, bh);
+  ctx.fillStyle   = rc.badge;
+  ctx.fillText(badgeText, bx + 10, by + 16);
+
+  // Futa badge
+  if (isFuta) {
+    ctx.font = '10px Share Tech Mono, monospace';
+    var fw = ctx.measureText('FUTA').width + 16;
+    var fx = bx - fw - 8;
+    ctx.strokeStyle = '#ff6b9d';
+    ctx.lineWidth   = 1;
+    ctx.strokeRect(fx, by, fw, bh);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('FUTA', fx + 8, by + 16);
+  }
+
+  // Divider
+  ctx.strokeStyle = 'rgba(58,69,96,0.8)';
+  ctx.lineWidth   = 1;
+  ctx.beginPath();
+  ctx.moveTo(28, 94); ctx.lineTo(W-28, 94);
+  ctx.stroke();
+
+  // Stats grid -- two columns
+  var leftStats  = [], rightStats = [];
+  statRows.forEach(function(s, i) {
+    if (i % 2 === 0) leftStats.push(s); else rightStats.push(s);
+  });
+  var topY = 116;
+  var col1X = 28, col2X = W / 2 + 10;
+
+  function drawStatRow(s, x, y) {
+    // Icon
+    ctx.font      = '13px Share Tech Mono, monospace';
+    ctx.fillStyle = s.futa ? '#ff6b9d' : '#7033ff';
+    ctx.fillText(s.icon, x, y);
+    // Label
+    ctx.font      = '10px Share Tech Mono, monospace';
+    ctx.fillStyle = '#7033ff';
+    ctx.fillText(s.label, x + 22, y);
+    // Value
+    ctx.font      = 'bold 11px Share Tech Mono, monospace';
+    ctx.fillStyle = s.futa ? '#ff6b9d' : '#fb00ff';
+    var maxW = W/2 - 80;
+    var vx = x + (W/2 - 40);
+    ctx.textAlign = 'right';
+    ctx.fillText(s.val, vx, y);
+    ctx.textAlign = 'left';
+  }
+
+  leftStats.forEach(function(s, i)  { drawStatRow(s, col1X, topY + i * rowH); });
+  rightStats.forEach(function(s, i) { drawStatRow(s, col2X, topY + i * rowH); });
+
+  // Stars strip at bottom
+  ctx.font      = '13px Share Tech Mono, monospace';
+  ctx.fillStyle = rc.badge;
+  ctx.shadowColor = rc.border;
+  ctx.shadowBlur  = rarity === 'Legendary' ? 10 : rarity === 'Rare' || rarity === 'Epic' ? 6 : 0;
+  ctx.textAlign   = 'center';
+  ctx.fillText(stars, W/2, H - 14);
+  ctx.shadowBlur  = 0;
+  ctx.textAlign   = 'left';
+
+  // Download
+  var safeName = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+  var link = document.createElement('a');
+  link.download = safeName + '_' + rarity.toLowerCase() + '_card.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
 
 </script>
