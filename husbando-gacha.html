@@ -427,6 +427,8 @@ const NEG_NSFW='lowres, bad anatomy, bad hands, missing fingers, extra fingers, 
 function roll(){
   rollCount++;document.getElementById('rollCount').textContent=rollCount;
   var name=pick(NAMES),race=weightedRandom(RACES),hairCol=weightedRandom(HAIR_COLORS),hairSty=weightedRandom(HAIR_STYLES),eyes=weightedRandom(EYE_COLORS),physique=weightedRandom(PHYSIQUES),bust=weightedRandom(isNSFW?BUST_NSFW:BUST_SFW),thighs=weightedRandom(THIGHS),hips=weightedRandom(HIPS),skin=weightedRandom(SKIN),expression=weightedRandom(EXPRESSIONS),outfit=weightedRandom(isNSFW?OUTFITS_NSFW:OUTFITS_SFW),acc=weightedRandom(ACCESSORIES),pose=isNSFW?pickPose(POSES_NSFW,'hWeight',outfit.label):pickPose(POSES_SFW,'weight',outfit.label),rarity=weightedRandom(RARITIES);
+  var KITSUNE_TAILS={Common:1,Uncommon:2,Rare:4,Epic:7,Legendary:9};
+  if(race.label==='Kitsune'){var tc=KITSUNE_TAILS[rarity.label]||1;race=Object.assign({},race,{tags:race.tags.replace('fox tail,',tc===1?'fox tail,':(tc+' fox tails,'))});}
   var bg=pickBg(race.label,outfit.label,rarity.label),rQ=RARITY_QUALITY[rarity.label],rB=showBorder?(RARITY_BORDER[rarity.label]||''):'';
   lastRoll={raceTags:race.tags,skinTags:skin.tags,hairColTags:hairCol.tags,hairStyTags:hairSty.tags,eyeTags:eyes.tags,physiqueTags:physique.tags,bustTags:bust.tags,thighTags:thighs.tags,hipTags:hips.tags,expressionTags:expression.tags,outfitTags:outfit.tags,accTags:acc.tags,poseTags:pose.tags,bg:bg,rQ:rQ,rarity:rarity};
   var tags=[race.tags,skin.tags,hairCol.tags,hairSty.tags,eyes.tags,physique.tags,bust.tags,thighs.tags||null,hips.tags||null,expression.tags,outfit.tags,acc.tags||null,pose.tags||null,'solo,',bg,rB,rQ].filter(function(t){return t&&t.trim();}).join('\n');

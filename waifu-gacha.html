@@ -435,6 +435,8 @@ const NEG_NSFW='lowres, bad anatomy, bad hands, missing fingers, extra fingers, 
 function roll(){
   rollCount++;document.getElementById('rollCount').textContent=rollCount;
   var name=pick(NAMES),race=weightedRandom(RACES),hairCol=weightedRandom(HAIR_COLORS),hairSty=weightedRandom(HAIR_STYLES),eyes=weightedRandom(EYE_COLORS),physique=weightedRandom(PHYSIQUES),bust=weightedRandom(isNSFW?BUST_NSFW:BUST_SFW),thighs=weightedRandom(THIGHS),hips=weightedRandom(HIPS),skin=weightedRandom(SKIN),expression=weightedRandom(EXPRESSIONS),outfit=weightedRandom(isNSFW?OUTFITS_NSFW:OUTFITS_SFW),acc=weightedRandom(ACCESSORIES),pose=isNSFW?pickPose(POSES_NSFW,'wWeight',outfit.label):pickPose(POSES_SFW,'weight',outfit.label),rarity=weightedRandom(RARITIES);
+  var KITSUNE_TAILS={Common:1,Uncommon:2,Rare:4,Epic:7,Legendary:9};
+  if(race.label==='Kitsune'){var tc=KITSUNE_TAILS[rarity.label]||1;race=Object.assign({},race,{tags:race.tags.replace('fox tail,',tc===1?'fox tail,':(tc+' fox tails,'))});}
   var isFuta=isNSFW&&Math.random()<0.15;
   if(isFuta)rarity=boostRarity(rarity);
   var bg=pickBg(race.label,outfit.label,rarity.label),rQ=RARITY_QUALITY[rarity.label],rB=showBorder?(RARITY_BORDER[rarity.label]||''):'',futaTags=isFuta?'futanari, futa, penis, both genitals,':'',bustTags=isFuta?bust.tags.replace('bare breasts,','bare breasts, erect penis,'):bust.tags;
