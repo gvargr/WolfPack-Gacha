@@ -177,6 +177,8 @@ body::before {
 .rarity-badge.Legendary{color:var(--legendary);border-color:var(--legendary);background:rgba(255,107,0,0.08);}
 .futa-badge{font-size:9px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--accent3);color:var(--accent3);margin-left:6px;display:none;}
 .futa-badge.visible{display:inline;}
+.femboy-badge{font-size:9px;letter-spacing:1px;padding:2px 6px;border:1px solid #7fffd4;color:#7fffd4;margin-left:6px;display:none;}
+.femboy-badge.visible{display:inline;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 20px;}
 .stat-row{display:flex;align-items:baseline;gap:8px;font-size:12px;opacity:0;transform:translateX(-8px);transition:opacity 0.25s ease,transform 0.25s ease;}
 .stat-row.visible{opacity:1;transform:translateX(0);}
@@ -185,6 +187,8 @@ body::before {
 .stat-value{color:var(--text);margin-left:auto;text-align:right;font-size:11px;}
 .stat-row.futa-row .stat-icon{color:var(--accent3);}
 .stat-row.futa-row .stat-value{color:var(--accent3);}
+.stat-row.femboy-row .stat-icon{color:#7fffd4;}
+.stat-row.femboy-row .stat-value{color:#7fffd4;}
 .prompt-section,.neg-section{width:100%;max-width:440px;}
 .prompt-label{font-size:10px;letter-spacing:2px;color:var(--text3);margin-bottom:5px;}
 .prompt-box{background:var(--bg3);border:1px solid var(--border);padding:12px 14px;font-size:11px;line-height:1.7;color:var(--accent3);min-height:70px;cursor:pointer;transition:border-color 0.15s;position:relative;word-break:break-word;}
@@ -236,8 +240,8 @@ body::before {
       <p><strong>Background &amp; Scene</strong><br>
       The background is weighted by race and refined by outfit. An Elf in Fantasy Robes gets a moonlit elven grove with floating scrolls. A Vampire in a Gothic outfit gets a candlelit dungeon. The scene tag is visible on the card and included in the prompt.</p>
 
-      <p><strong>NSFW &amp; Futanari</strong><br>
-      NSFW mode unlocks a wider outfit pool with explicit tags and updates the negative prompt automatically. On Waifu pulls there is a 15&#37; chance of a Futanari roll -- this boosts the rarity one tier and adds a FUTA badge to the card.</p>
+      <p><strong>NSFW &amp; Futanari &amp; Femboy</strong><br>
+      NSFW mode unlocks a wider outfit pool with explicit tags and updates the negative prompt automatically. On Waifu pulls there is a 15&#37; chance of a Futanari roll -- this boosts the rarity one tier and adds a FUTA badge to the card. There is also a separate 5&#37; chance of a Femboy roll -- this adds feminine male traits without a rarity boost (rare by design, deliberately lower power).</p>
 
       <p><strong>Save Card</strong><br>
       Downloads a PNG of the collector card with all stats, rarity effects, corner gems and star strip. Works fully offline -- no internet connection required.</p>
@@ -288,6 +292,7 @@ body::before {
         <div>
           <span class="rarity-badge Common" id="rarityBadge">Common</span>
           <span class="futa-badge" id="futaBadge">FUTA</span>
+          <span class="femboy-badge" id="femBadge">FEMBOY</span>
         </div>
       </div>
       <div class="stat-grid" id="statGrid"></div>
@@ -394,15 +399,15 @@ function pickBg(race,outfit,rarity){var bgs=RACE_BG[race]||RACE_BG['Human'],bg=b
 function boostRarity(r){var nl=RARITY_BOOST[r.label];return nl?RARITIES.find(function(x){return x.label===nl;})||r:r;}
 var rollCount=0,currentPrompt='',currentNeg='',isNSFW=false,showBorder=true,lastRoll=null;
 function setBorder(v){showBorder=v;var bt=document.getElementById('borderToggle'),bl=document.getElementById('borderLbl');if(bt)bt.classList.toggle('nsfw',v);if(bl)bl.classList.toggle('active',v);if(lastRoll)rebuildPrompt();}
-function rebuildPrompt(){if(!lastRoll)return;var r=lastRoll,rB=showBorder?(RARITY_BORDER[r.rarity.label]||''):'';var tags=[r.raceTags,r.skinTags,r.hairColTags,r.hairStyTags,r.eyeTags,r.physiqueTags,r.bustTags,r.thighTags||null,r.hipTags||null,r.expressionTags,r.outfitTags,r.accTags||null,r.poseTags||null,r.futaTags||null,'solo,',r.bg,rB,r.rQ].filter(function(t){return t&&t.trim();}).join('\n');currentPrompt=tags;document.getElementById('promptBox').textContent=currentPrompt;}
+function rebuildPrompt(){if(!lastRoll)return;var r=lastRoll,rB=showBorder?(RARITY_BORDER[r.rarity.label]||''):'';var tags=[r.raceTags,r.skinTags,r.hairColTags,r.hairStyTags,r.eyeTags,r.physiqueTags,r.bustTags,r.thighTags||null,r.hipTags||null,r.expressionTags,r.outfitTags,r.accTags||null,r.poseTags||null,r.futaTags||null,r.femTags||null,'solo,',r.bg,rB,r.rQ].filter(function(t){return t&&t.trim();}).join('\n');currentPrompt=tags;document.getElementById('promptBox').textContent=currentPrompt;}
 function setNSFW(v){isNSFW=v;var sw=document.getElementById('sfwToggle'),sl=document.getElementById('sfwLbl'),nl=document.getElementById('nsfwLbl'),ind=document.getElementById('nsfwInd');if(sw)sw.classList.toggle('nsfw',v);if(sl)sl.classList.toggle('active',!v);if(nl)nl.classList.toggle('active',v);if(ind)ind.classList.toggle('visible',v);}
 function copyPrompt(){if(!currentPrompt)return;var box=document.getElementById('promptBox');try{navigator.clipboard.writeText(currentPrompt);}catch(e){var ta=document.createElement('textarea');ta.value=currentPrompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}box.classList.add('copy-flash');setTimeout(function(){box.classList.remove('copy-flash');},600);}
 function copyNeg(){if(!currentNeg)return;var box=document.getElementById('negBox');try{navigator.clipboard.writeText(currentNeg);}catch(e){var ta=document.createElement('textarea');ta.value=currentNeg;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}box.classList.add('copy-flash');setTimeout(function(){box.classList.remove('copy-flash');},600);}
 function openModal(){document.getElementById('modalOverlay').classList.add('open');}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
-function animateCard(rarity,isFuta){var card=document.getElementById('card');card.classList.remove('flashing');void card.offsetWidth;card.classList.add('flashing');card.setAttribute('data-rarity',rarity);card.setAttribute('data-futa',isFuta?'true':'false');}
-function updateCardMeta(name,rarity,stars,isFuta){document.getElementById('charName').textContent=name;var badge=document.getElementById('rarityBadge');badge.textContent=rarity;badge.className='rarity-badge '+rarity;document.getElementById('cardStars').textContent=stars;var fb=document.getElementById('futaBadge');if(fb)fb.className='futa-badge'+(isFuta?' visible':'');}
-function renderStats(stats){var grid=document.getElementById('statGrid');grid.innerHTML=stats.map(function(s){return'<div class="stat-row'+(s.futa?' futa-row':'')+'" data-key="'+s.key+'"><span class="stat-icon">'+s.icon+'</span><span class="stat-label">'+s.label+'</span><span class="stat-value">'+s.value+'</span></div>';}).join('');var rows=grid.querySelectorAll('.stat-row');rows.forEach(function(row,i){setTimeout(function(){row.classList.add('visible');},i*40+80);});}
+function animateCard(rarity,isFuta,isFemboy){var card=document.getElementById('card');card.classList.remove('flashing');void card.offsetWidth;card.classList.add('flashing');card.setAttribute('data-rarity',rarity);card.setAttribute('data-futa',isFuta?'true':'false');card.setAttribute('data-femboy',isFemboy?'true':'false');}
+function updateCardMeta(name,rarity,stars,isFuta,isFemboy){document.getElementById('charName').textContent=name;var badge=document.getElementById('rarityBadge');badge.textContent=rarity;badge.className='rarity-badge '+rarity;document.getElementById('cardStars').textContent=stars;var fb=document.getElementById('futaBadge');if(fb)fb.className='futa-badge'+(isFuta?' visible':'');var fb2=document.getElementById('femBadge');if(fb2)fb2.className='femboy-badge'+(isFemboy?' visible':'');}
+function renderStats(stats){var grid=document.getElementById('statGrid');grid.innerHTML=stats.map(function(s){return'<div class="stat-row'+(s.futa?' futa-row':s.femboy?' femboy-row':'')+'" data-key="'+s.key+'"><span class="stat-icon">'+s.icon+'</span><span class="stat-label">'+s.label+'</span><span class="stat-value">'+s.value+'</span></div>';}).join('');var rows=grid.querySelectorAll('.stat-row');rows.forEach(function(row,i){setTimeout(function(){row.classList.add('visible');},i*40+80);});}
 document.addEventListener('DOMContentLoaded',function(){
   var logo=document.getElementById('logoMenu');
   if(logo){logo.addEventListener('click',function(e){if(e.target.closest('.logo-nav-item'))return;logo.classList.toggle('open');});document.addEventListener('click',function(e){if(!logo.contains(e.target))logo.classList.remove('open');});}
@@ -439,13 +444,22 @@ function roll(){
   if(race.label==='Kitsune'){var tc=KITSUNE_TAILS[rarity.label]||1;race=Object.assign({},race,{tags:race.tags.replace('fox tail,',tc===1?'fox tail,':(tc+' fox tails,'))});}
   var isFuta=isNSFW&&Math.random()<0.15;
   if(isFuta)rarity=boostRarity(rarity);
-  var bg=pickBg(race.label,outfit.label,rarity.label),rQ=RARITY_QUALITY[rarity.label],rB=showBorder?(RARITY_BORDER[rarity.label]||''):'',futaTags=isFuta?'futanari, futa, penis, both genitals,':'',bustTags=isFuta?bust.tags.replace('bare breasts,','bare breasts, erect penis,'):bust.tags;
-  lastRoll={raceTags:race.tags,skinTags:skin.tags,hairColTags:hairCol.tags,hairStyTags:hairSty.tags,eyeTags:eyes.tags,physiqueTags:physique.tags,bustTags:bustTags,thighTags:thighs.tags,hipTags:hips.tags,expressionTags:expression.tags,outfitTags:outfit.tags,accTags:acc.tags,poseTags:pose.tags,futaTags:futaTags,bg:bg,rQ:rQ,rarity:rarity};
-  var tags=[race.tags,skin.tags,hairCol.tags,hairSty.tags,eyes.tags,physique.tags,bustTags,thighs.tags||null,hips.tags||null,expression.tags,outfit.tags,acc.tags||null,pose.tags||null,futaTags||null,'solo,',bg,rB,rQ].filter(function(t){return t&&t.trim();}).join('\n');
+  var isFemboy=isNSFW&&!isFuta&&Math.random()<0.05;
+  // Femboy body overrides -- slender thighs, narrow hips, flat/small chest
+  if(isFemboy){
+    thighs={label:'Slim',tags:'slim thighs,'};
+    hips={label:'Narrow',tags:'narrow hips,'};
+    bust=Math.random()<0.6
+      ?{label:'Flat',tags:'flat chest,'}
+      :{label:'Small',tags:'small breasts,'};
+  }
+  var bg=pickBg(race.label,outfit.label,rarity.label),rQ=RARITY_QUALITY[rarity.label],rB=showBorder?(RARITY_BORDER[rarity.label]||''):'',futaTags=isFuta?'futanari, futa, penis, both genitals,':'',femTags=isFemboy?'femboy, feminine male, crossdressing, androgynous, penis,':'',bustTags=isFuta?bust.tags.replace('bare breasts,','bare breasts, erect penis,'):bust.tags;
+  lastRoll={raceTags:race.tags,skinTags:skin.tags,hairColTags:hairCol.tags,hairStyTags:hairSty.tags,eyeTags:eyes.tags,physiqueTags:physique.tags,bustTags:bustTags,thighTags:thighs.tags,hipTags:hips.tags,expressionTags:expression.tags,outfitTags:outfit.tags,accTags:acc.tags,poseTags:pose.tags,futaTags:futaTags,femTags:femTags,bg:bg,rQ:rQ,rarity:rarity};
+  var tags=[race.tags,skin.tags,hairCol.tags,hairSty.tags,eyes.tags,physique.tags,bustTags,thighs.tags||null,hips.tags||null,expression.tags,outfit.tags,acc.tags||null,pose.tags||null,futaTags||null,femTags||null,'solo,',bg,rB,rQ].filter(function(t){return t&&t.trim();}).join('\n');
   currentPrompt=tags;currentNeg=isNSFW?NEG_NSFW:NEG_SFW;
-  animateCard(rarity.label,isFuta);
-  updateCardMeta(name,rarity.label,rarity.stars,isFuta);
-  renderStats([{key:'Race',icon:race.icon||STAT_ICONS.Race,label:'RACE',value:race.label},{key:'HairColor',icon:STAT_ICONS.HairColor,label:'HAIR COLOR',value:hairCol.label},{key:'HairStyle',icon:STAT_ICONS.HairStyle,label:'HAIR STYLE',value:hairSty.label},{key:'Eyes',icon:STAT_ICONS.Eyes,label:'EYES',value:eyes.label},{key:'Physique',icon:STAT_ICONS.Physique,label:'PHYSIQUE',value:physique.label},{key:'Bust',icon:STAT_ICONS.Bust,label:'BUST',value:bust.label},{key:'Thighs',icon:STAT_ICONS.Legs,label:'THIGHS',value:thighs.label||'Average'},{key:'Hips',icon:STAT_ICONS.Build,label:'HIPS',value:hips.label||'Average'},{key:'Skin',icon:STAT_ICONS.Skin,label:'SKIN',value:skin.label},{key:'Expression',icon:STAT_ICONS.Expression,label:'EXPRESSION',value:expression.label},{key:'Outfit',icon:STAT_ICONS.Outfit,label:'OUTFIT',value:outfit.label},{key:'Accessory',icon:STAT_ICONS.Accessory,label:'ACCESSORY',value:acc.label},{key:'Scene',icon:STAT_ICONS.Scene,label:'SCENE',value:bg.split(',')[0]},].concat(isFuta?[{key:'Type',icon:STAT_ICONS.Type,label:'TYPE',value:'Futanari \u2666',futa:true}]:[]));
+  animateCard(rarity.label,isFuta,isFemboy);
+  updateCardMeta(name,rarity.label,rarity.stars,isFuta,isFemboy);
+  renderStats([{key:'Race',icon:race.icon||STAT_ICONS.Race,label:'RACE',value:race.label},{key:'HairColor',icon:STAT_ICONS.HairColor,label:'HAIR COLOR',value:hairCol.label},{key:'HairStyle',icon:STAT_ICONS.HairStyle,label:'HAIR STYLE',value:hairSty.label},{key:'Eyes',icon:STAT_ICONS.Eyes,label:'EYES',value:eyes.label},{key:'Physique',icon:STAT_ICONS.Physique,label:'PHYSIQUE',value:physique.label},{key:'Bust',icon:STAT_ICONS.Bust,label:'BUST',value:bust.label},{key:'Thighs',icon:STAT_ICONS.Legs,label:'THIGHS',value:thighs.label||'Average'},{key:'Hips',icon:STAT_ICONS.Build,label:'HIPS',value:hips.label||'Average'},{key:'Skin',icon:STAT_ICONS.Skin,label:'SKIN',value:skin.label},{key:'Expression',icon:STAT_ICONS.Expression,label:'EXPRESSION',value:expression.label},{key:'Outfit',icon:STAT_ICONS.Outfit,label:'OUTFIT',value:outfit.label},{key:'Accessory',icon:STAT_ICONS.Accessory,label:'ACCESSORY',value:acc.label},{key:'Scene',icon:STAT_ICONS.Scene,label:'SCENE',value:bg.split(',')[0]},].concat(isFuta?[{key:'Type',icon:STAT_ICONS.Type,label:'TYPE',value:'Futanari \u2666',futa:true}]:[]).concat(isFemboy?[{key:'Type',icon:STAT_ICONS.Type,label:'TYPE',value:'Femboy \u2666',femboy:true}]:[]));
   document.getElementById('promptBox').textContent=currentPrompt;
   document.getElementById('negBox').textContent=currentNeg;
 }
@@ -455,6 +469,7 @@ function downloadCard() {
   var name = document.getElementById('charName').textContent || 'card';
   var rarity = document.getElementById('card').getAttribute('data-rarity') || 'Common';
   var isFuta = document.getElementById('card').getAttribute('data-futa') === 'true';
+  var isFemboy = document.getElementById('card').getAttribute('data-femboy') === 'true';
   var stars = document.getElementById('cardStars').textContent || '';
 
   // Gather stat rows
@@ -596,6 +611,18 @@ function downloadCard() {
     ctx.strokeRect(fx, by, fw, bh);
     ctx.fillStyle = '#ff6b9d';
     ctx.fillText('FUTA', fx + 8, by + 16);
+  }
+
+  // Femboy badge
+  if (isFemboy) {
+    ctx.font = '10px Share Tech Mono, monospace';
+    var femW = ctx.measureText('FEMBOY').width + 16;
+    var femX = bx - femW - 8;
+    ctx.strokeStyle = '#7fffd4';
+    ctx.lineWidth   = 1;
+    ctx.strokeRect(femX, by, femW, bh);
+    ctx.fillStyle = '#7fffd4';
+    ctx.fillText('FEMBOY', femX + 8, by + 16);
   }
 
   // Divider
