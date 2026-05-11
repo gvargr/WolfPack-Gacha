@@ -309,7 +309,7 @@ const RARITY_BORDER={Common:'simple border, clean frame,',Uncommon:'decorative b
 const STAT_ICONS={Race:'🜁',HairColor:'◎',HairStyle:'〜',Eyes:'◉',Physique:'△',Bust:'✦',Legs:'◐',Build:'◇',Skin:'◑',Expression:'〽',Outfit:'◈',Accessory:'✧',Scene:'◫',Type:'♦'};
 function weightedRandom(arr){var t=arr.reduce(function(s,i){return s+(i.weight||1);},0),r=Math.random()*t;for(var i=0;i<arr.length;i++){r-=(arr[i].weight||1);if(r<=0)return arr[i];}return arr[arr.length-1];}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function pickBg(race,outfit,rarity){var bgs=RACE_BG[race]||RACE_BG['Human'],bg=bgs[Math.floor(Math.random()*bgs.length)],mod=OUTFIT_BG_MOD[outfit]||'';if(mod)bg=mod+' '+bg;return(bg+' '+(RARITY_BG_QUALITY[rarity]||'')).trim();}
+function pickBg(race,outfit,rarity){var bgs=RACE_BG[race]||RACE_BG['Human'],bg=bgs[Math.floor(Math.random()*bgs.length)],mod=OUTFIT_BG_MOD[outfit]||'';if(mod&&Math.random()<0.66)bg=mod+' '+bg;return(bg+' '+(RARITY_BG_QUALITY[rarity]||'')).trim();}
 function boostRarity(r){var nl=RARITY_BOOST[r.label];return nl?RARITIES.find(function(x){return x.label===nl;})||r:r;}
 var rollCount=0,currentPrompt='',currentNeg='',isNSFW=false,nemoActive=false,monalisaActive=false;
 
